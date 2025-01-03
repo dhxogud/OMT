@@ -36,4 +36,9 @@ public class CameraController : MonoBehaviour
             transform.LookAt(_target.transform);
         }
     }
+    
+    void FocusOnTarget()
+    {
+        
+    }
 }
