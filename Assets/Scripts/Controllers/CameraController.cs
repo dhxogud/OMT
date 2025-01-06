@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.ConstrainedExecution;
 using JetBrains.Annotations;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -26,39 +27,37 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     GameObject _target = null;
 
+    readonly float minDistance = 5.0f;
+    readonly float maxDistance = 30.0f;
+
     void Start() 
     {
-        Managers.Input.MouseAction -= OnMouseWheel;
-        Managers.Input.MouseAction += OnMouseWheel;
-        Managers.Input.MouseAction -= OnMouseClicked;
-        Managers.Input.MouseAction += OnMouseClicked;
         Managers.Input.KeyAction -= OnKeyboard;
         Managers.Input.KeyAction += OnKeyboard;
+        Managers.Input.MouseButtonAction -= OnMouseClicked;
+        Managers.Input.MouseButtonAction += OnMouseClicked;
+        Managers.Input.MouseWheelAction -= OnMouseWheel;
+        Managers.Input.MouseWheelAction += OnMouseWheel;
     }
     void LateUpdate() 
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        UpdateMoving();
+        UpdateAngle();
+    }
 
-            RaycastHit hit;
-            if (Physics.Raycast(ray.origin, ray.direction, out hit, 100.0f))
+    void OnMouseClicked(Define.MouseButtonEvent evt) // 이거 1초 동안 움직이게 만들고 싶다. 이름도 바꿀거임 [타겟 선택] 이런 느낌으로
+    {
+        Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
+
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            if (hit.collider.gameObject.tag == "Unit")
             {
                 _target = hit.collider.gameObject;
             }
+
         }
-    }
-
-    void OnMouseClicked(Define.MouseEvent evt) // 이거 1초 동안 움직이게 만들고 싶다. 이름도 바꿀거임 [타겟 선택] 이런 느낌으로
-    {
-        Vector3 mouse = Input.mousePosition;
-        if (_target == null) 
-            return;
-
-        Vector3 dest = _target.transform.position + Vector3.up * 10.0f;
-
-        transform.position = Vector3.Slerp(transform.position, dest, 0.8f) * Time.deltaTime;
-        transform.LookAt(_target.transform);
 
     }
 
@@ -86,9 +85,34 @@ public class CameraController : MonoBehaviour
     // Zoom 했을때, 카메라가 바라보고 있는 방향으로 직선으로 이동하는게 아니라 2차 곡선을 그리듯이 접근하는 방식 ㄱㄱ
     // 이러면 카메라의 FOV 값을 건드리는게 아니라, 위치와 각도를 정해진 범위에 맞게 수정해야됨
     // 타겟과의 거리는 5~20 으로 제한
-    void OnMouseWheel(Define.MouseEvent evt)
+    void OnMouseWheel(Define.MouseWheelEvent evt)
     {
-        Vector3 dist = transform.position;
+        if (evt == Define.MouseWheelEvent.Up)
+        {
+
+        }
+        else if (evt == Define.MouseWheelEvent.Down)
+        {
+
+        }
+    }
+
+    void UpdateMoving()
+    {
+        if (_target == null)
+            return;
+
+        if (Vector3.Distance(transform.position, _target.transform.position) > minDistance)
+        {
+            transform.position = Vector3.Slerp(transform.position, _target.transform.position, 0.1f);
+        }
+        else
+            _target = null;
+    }
+    
+    void UpdateAngle()
+    {
+
     }
 
     void Init()
