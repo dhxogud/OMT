@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -16,6 +17,8 @@ public class CameraController : MonoBehaviour
     // 3. Raycast로 콜라이더 충돌 여부를 판단한다.
 
     // 4. 충돌이 일어난 위치로 이동한다. Slerp 방식으로 왜? y포지션도 고려해야 하므로
+    [Header("Component")]
+    public Camera _camera;
     [SerializeField]
     Define.CameraMode _mode = Define.CameraMode.QuarterView;
     [SerializeField]
@@ -31,19 +34,11 @@ public class CameraController : MonoBehaviour
             if (Physics.Raycast(ray.origin, ray.direction, out hit, 100.0f))
             {
                 _target = hit.collider.gameObject;
-
+                Debug.Log(Vector3.Distance(transform.position, _target.transform.position));
             }
         }
-
-        if (Input.GetKey(KeyCode.Q))
-        {
-           TurnAngle(-1);
-        }
-        else if (Input.GetKey(KeyCode.E))
-        {
-            TurnAngle(1);
-        }
-
+        Zoom();
+        TurnAngle();
         MoveToTarget();
     }
 
@@ -63,25 +58,41 @@ public class CameraController : MonoBehaviour
     // 대충 축의 거리는 8.0f 가 적당해 보이므로 이 값을 defalut로 두겠음 (기본 box object의 sclae 1일때를 기준)
     // 근데 생각해보니 내가 이제 맵의 노드들을 분리할때 그 노드의 위치벡터 기준으로 거리를 제야하니깐 지금은 정확한 수치를 마련 못하는 것도 당연하네?
     // 나중에 targetAxis 저 아래 10.0f 란 수치가 아니라. Vector3.Distance(transform.position, MapNode node...) 막 이런식으로 구해야겟듬
-    void TurnAngle(int rotate_dir)
+    void TurnAngle()
     {
-        Vector3 targetAxis = transform.position + transform.forward * 10.0f; 
-        // 여기서 10.0f는 변수로 저장되어야 하며, 나중에 zoom-in, zoom-out할 때도 쓰이는 수치임, min~max 사이에 값을 유지해야하는 수치임
-        
+        if (Input.GetKey(KeyCode.Q))
+        {
+
+            transform.position += transform.right * 10.0f * Time.deltaTime;
+        }
+        else if (Input.GetKey(KeyCode.E))
+        {
+            int direct = -1;
+            transform.position += transform.right * 10.0f * Time.deltaTime * direct;
+        }
         // Debug.Log((origin + transform.forward).magnitude);
-        transform.position += transform.right * 10.0f * Time.deltaTime * rotate_dir;
-        transform.LookAt(targetAxis);
-        // Debug.Log((origin + transform.forward).magnitude);
+        // transform.LookAt(targetAxis); 일단 여기 바꿀꺼임, target을 고정으로 회전하는게 아니라 이동속도에 맞춘 회전각으로 다시 회전해야됨
+        // 바라보고 있는 초기값(position, rotation이 있는 상태에서, 이동거리가 d 라면, 
+
     }
     
-    void ZoomIn()
+    // 마우스 위쪽으로 휠 돌리면 Vector2(null, +value) 되고
+    // 마우스 아랫쪽으로 휠 돌리면 Vector2(null, -value) 되는걸 확인 마우스 휠 처리도 나중에 Action에 넣어서 ㄱㄱ
+    // Field of View 값 변경해서 zoom 기능 구현할 수 있음 값은 (30~60) 이 제한 범위로
+    void Zoom()
     {
-        transform.position += transform.forward.normalized * Time.deltaTime; 
+        Vector2 mouseWheel = Input.mouseScrollDelta;
+        float fieldOfView = _camera.fieldOfView;
+
+        if (mouseWheel.y > 0)
+            fieldOfView -= mouseWheel.magnitude;
+
+        else if (mouseWheel.y < 0)
+            fieldOfView += mouseWheel.magnitude;
+        
+        _camera.fieldOfView = Mathf.Clamp(fieldOfView, 30.0f, 60.0f);
     }
-    void ZoomOut()
-    {
-        transform.position -= transform.forward.normalized * Time.deltaTime; 
-    }
+
     void Init()
     {
         _target = null;
