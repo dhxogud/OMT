@@ -8,6 +8,7 @@ using UnityEngine.UIElements;
 
 public class CameraController : MonoBehaviour
 {
+    // *** 타겟과의 최소 거리는 10~20으로 *** // 
     // 카메라는 WASD, QE(카메라 y축 -+ 회전), 휠(Zoom-in, Zoom-out), 클릭 와 같은 Input event로 움직인다.
     // 또한 내가 선택한 케릭터가 적 케릭터를 '공격'할 때 타겟팅이 되었다는 것을 보여주기 위해 해당 타겟 유닛을 포커스 하러 움직인다.
 
@@ -78,19 +79,10 @@ public class CameraController : MonoBehaviour
     
     // 마우스 위쪽으로 휠 돌리면 Vector2(null, +value) 되고
     // 마우스 아랫쪽으로 휠 돌리면 Vector2(null, -value) 되는걸 확인 마우스 휠 처리도 나중에 Action에 넣어서 ㄱㄱ
-    // Field of View 값 변경해서 zoom 기능 구현할 수 있음 값은 (30~60) 이 제한 범위로
+    // Field of View 값 변경해서 zoom 기능 구현할 수 있음 값은 (30~60)... 인데 이거 문제 되는거같다고 함? 카메라가 직접 앞뒤로 이동해야 맞는듯
     void Zoom()
     {
-        Vector2 mouseWheel = Input.mouseScrollDelta;
-        float fieldOfView = _camera.fieldOfView;
-
-        if (mouseWheel.y > 0)
-            fieldOfView -= mouseWheel.magnitude;
-
-        else if (mouseWheel.y < 0)
-            fieldOfView += mouseWheel.magnitude;
         
-        _camera.fieldOfView = Mathf.Clamp(fieldOfView, 30.0f, 60.0f);
     }
 
     void Init()
