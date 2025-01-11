@@ -6,7 +6,7 @@ using UnityEngine.PlayerLoop;
 
 public class Managers : MonoBehaviour
 {
-    static Managers _instance;
+    static Managers _instance ;
     InputManager _input = new InputManager();
 
     
@@ -30,7 +30,7 @@ public class Managers : MonoBehaviour
             GameObject go = GameObject.Find("@Managers");
             if (go == null)
             {
-                go.name = "@Managers";
+                go = new GameObject { name = "@Managers" };
                 go.AddComponent<Managers>();
             }
             DontDestroyOnLoad(go);

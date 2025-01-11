@@ -28,10 +28,6 @@ public class InputManager
                     _pressed = false;
                 }
             }
-            if (Input.mouseScrollDelta.magnitude > 0)
-            {
-                MouseAction.Invoke(Define.MouseEvent.Wheel);
-            }
         }
     }
 }
