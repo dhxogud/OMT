@@ -5,8 +5,7 @@ using UnityEngine.UIElements;
 public class InputManager
 {
     public Action KeyAction;
-    public Action<Define.MouseButtonEvent> MouseButtonAction = null;
-    public Action<Define.MouseWheelEvent> MouseWheelAction = null;
+    public Action<Define.MouseEvent> MouseAction = null;
     private bool _pressed;
 
     public void OnUpdate()
@@ -14,31 +13,20 @@ public class InputManager
         if (Input.anyKey && KeyAction != null)
             KeyAction.Invoke();
 
-        if (MouseButtonAction != null)
+        if (MouseAction != null)
         {
             if (Input.GetMouseButton(0))
             {
-                MouseButtonAction.Invoke(Define.MouseButtonEvent.Press);
+                MouseAction.Invoke(Define.MouseEvent.Press);
                 _pressed = true;
             }
             else 
             {
                 if (_pressed)
                 {
-                    MouseButtonAction.Invoke(Define.MouseButtonEvent.Click);
+                    MouseAction.Invoke(Define.MouseEvent.Click);
                     _pressed = false;
                 }
-            }
-        }
-        if (MouseWheelAction != null)
-        {
-            if (Input.GetAxis("Mouse ScrollWheel") > 0)
-            {
-                MouseWheelAction.Invoke(Define.MouseWheelEvent.Up);
-            }
-            else
-            {
-                MouseWheelAction.Invoke(Define.MouseWheelEvent.Down);
             }
         }
     }

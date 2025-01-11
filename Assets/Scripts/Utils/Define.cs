@@ -9,21 +9,14 @@ public class Define
         QuarterView
     }
     
-    public enum MouseButtonEvent
+    public enum MouseEvent
     {
         Click,
         Press,
         Drag,
-        Move
+        WheelClick,
+        WheelPress,
     }
-
-    public enum MouseWheelEvent
-    {
-        Up,
-        Down,
-        Click
-    }
-
 
     public enum Objects
     {
