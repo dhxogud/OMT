@@ -7,14 +7,19 @@ using UnityEngine.UIElements;
 
 public class CameraController : MonoBehaviour
 {
-
-    [SerializeField]
     Define.CameraMode _mode = Define.CameraMode.QuarterView;
 
-    [SerializeField]
+    GameObject _target;
     float _dist = 10.0f;
-    float _moveSpeed = 5.0f;
+    float _moveSpeed = 10.0f;
     Quaternion init_rot = Quaternion.Euler(50.0f, 0.0f, 0.0f);
+
+    enum GameState
+    {
+        Lobby,
+        Game,
+
+    }
 
     void Start() 
     {
@@ -36,7 +41,11 @@ public class CameraController : MonoBehaviour
             {
                 if (hit.collider.gameObject.tag == "Unit")
                 {
-
+                    _target = hit.collider.gameObject;
+                    while (Vector3.Distance(_target.transform.position, transform.position) < _dist)
+                    {
+                        transform.position += (_target.transform.position - transform.position) * _moveSpeed * Time.deltaTime;
+                    }
                 }
             }
         }
@@ -71,18 +80,19 @@ public class CameraController : MonoBehaviour
 
     void LateUpdate() 
     {
-        if (Input.mouseScrollDelta.y > 0 && transform.position.y > 5.0f)
+        if (Input.mouseScrollDelta.y > 0 && transform.position.y < 20.0f)
         {
-            transform.position += transform.forward * _moveSpeed * Time.deltaTime;
+            transform.position += Vector3.up * _moveSpeed * Time.deltaTime;
         }
-        else if (Input.mouseScrollDelta.y < 10.0f)
+        else if (Input.mouseScrollDelta.y < 0 && transform.position.y > 5.0f)
         {
-            transform.position -= transform.forward * _moveSpeed * Time.deltaTime;
+            transform.position += Vector3.down * _moveSpeed * Time.deltaTime;
         }
     }
 
     void Init()
     {
+        transform.position = Vector3.up * 10.0f;
         transform.rotation = init_rot;
     }
 }
