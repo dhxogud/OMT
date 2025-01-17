@@ -1,18 +1,16 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
-
 
 public class CameraController : MonoBehaviour
 {
+    [SerializeField]
     Define.CameraMode _mode = Define.CameraMode.QuarterView;
 
-    GameObject _target;
-    float _dist = 10.0f;
-    float _moveSpeed = 10.0f;
-    Quaternion init_rot = Quaternion.Euler(50.0f, 0.0f, 0.0f);
+    // 아래 멤버 변수들은 지울수도 잇음
+    GameObject _target = null;
+    Vector3 _dir = new Vector3(0.0f, 7.0f, -12.0f);
+    float _moveSpeed = 30.0f;
+    float _rotSpeed = 10.0f;
 
     enum GameState
     {
@@ -23,15 +21,13 @@ public class CameraController : MonoBehaviour
 
     void Start() 
     {
-        Init();
-
-        Managers.Input.KeyAction -= OnKeyboard;
-        Managers.Input.KeyAction += OnKeyboard;
-        Managers.Input.MouseAction -= OnMouseClicked;
-        Managers.Input.MouseAction += OnMouseClicked;
+        Managers.Input.MouseAction -= OnMouseClick;
+        Managers.Input.MouseAction += OnMouseClick;
+        Managers.Input.KeyAction -= OnKeyBoard;
+        Managers.Input.KeyAction += OnKeyBoard;
     }
 
-    void OnMouseClicked(Define.MouseEvent evt)
+    void OnMouseClick(Define.MouseEvent evt)
     {
         if (evt == Define.MouseEvent.Click)
         {
@@ -42,57 +38,36 @@ public class CameraController : MonoBehaviour
                 if (hit.collider.gameObject.tag == "Unit")
                 {
                     _target = hit.collider.gameObject;
-                    while (Vector3.Distance(_target.transform.position, transform.position) < _dist)
-                    {
-                        transform.position += (_target.transform.position - transform.position) * _moveSpeed * Time.deltaTime;
-                    }
                 }
             }
         }
     }
 
-    void OnKeyboard()
+    void OnKeyBoard()
     {
-        Vector3 axis = transform.position + transform.forward * _dist;
-        if (Input.GetKey(KeyCode.Q))
-        {
-            transform.position += -transform.right * _moveSpeed * Time.deltaTime;
-            transform.LookAt(axis);
-        }
-        else if (Input.GetKey(KeyCode.E))
-        {
-            transform.position += transform.right * _moveSpeed * Time.deltaTime;
-            transform.LookAt(axis);
-        }
+        _moveSpeed = Math.Clamp(_moveSpeed * Time.deltaTime, 0.5f, 3.0f);
+        _rotSpeed = Math.Clamp(_rotSpeed * Time.deltaTime, 0.5f, 1.0f);
 
-        Vector3 dir = Vector3.zero;
+        Vector3 moveDir = Vector3.zero;
         if (Input.GetKey(KeyCode.W))
-            dir += transform.forward;
-        if (Input.GetKey(KeyCode.A))
-            dir += -transform.right;
+            moveDir += transform.forward;
         if (Input.GetKey(KeyCode.S))
-            dir += -transform.forward;
+            moveDir += transform.forward * -1;
         if (Input.GetKey(KeyCode.D))
-            dir += transform.right;
-        dir.y = 0.0f;
-        transform.localPosition += dir.normalized * _moveSpeed * Time.deltaTime;
-    }
-
-    void LateUpdate() 
-    {
-        if (Input.mouseScrollDelta.y > 0 && transform.position.y < 20.0f)
+            moveDir += transform.right;
+        if (Input.GetKey(KeyCode.A))
+            moveDir += transform.right * -1;
+        
+        if (moveDir.magnitude != 0.0f)
         {
-            transform.position += Vector3.up * _moveSpeed * Time.deltaTime;
+            moveDir.y = 0.0f;
+            transform.position += moveDir.normalized * _moveSpeed;
         }
-        else if (Input.mouseScrollDelta.y < 0 && transform.position.y > 5.0f)
-        {
-            transform.position += Vector3.down * _moveSpeed * Time.deltaTime;
-        }
-    }
+        
+        if (Input.GetKey(KeyCode.Q))
+            transform.rotation = Quaternion.Euler(transform.eulerAngles + (Vector3.up * _rotSpeed));
+        else if (Input.GetKey(KeyCode.E))
+            transform.rotation = Quaternion.Euler(transform.eulerAngles + (Vector3.down * _rotSpeed));
 
-    void Init()
-    {
-        transform.position = Vector3.up * 10.0f;
-        transform.rotation = init_rot;
     }
 }

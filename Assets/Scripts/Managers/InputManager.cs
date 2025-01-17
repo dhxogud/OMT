@@ -7,6 +7,7 @@ public class InputManager
     public Action KeyAction;
     public Action<Define.MouseEvent> MouseAction = null;
     private bool _pressed;
+    public Vector3 _startDragPoint;
 
     public void OnUpdate()
     {
@@ -15,9 +16,13 @@ public class InputManager
 
         if (MouseAction != null)
         {
+            if (Input.GetMouseButtonDown(0))
+                _startDragPoint = Input.mousePosition;
+
             if (Input.GetMouseButton(0))
             {
                 MouseAction.Invoke(Define.MouseEvent.Press);
+                MouseAction.Invoke(Define.MouseEvent.Drag);
                 _pressed = true;
             }
             else 
