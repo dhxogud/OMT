@@ -14,6 +14,7 @@ public class Define
         Click,
         Press,
         Drag,
+        Scroll
     }
 
     public enum Objects

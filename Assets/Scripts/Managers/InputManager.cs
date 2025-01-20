@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 
 public class InputManager
@@ -11,18 +12,17 @@ public class InputManager
 
     public void OnUpdate()
     {
+        // if (EventSystem.current.IsPointerOverGameObject())
+        //     return;
+            
         if (Input.anyKey && KeyAction != null)
             KeyAction.Invoke();
 
         if (MouseAction != null)
         {
-            if (Input.GetMouseButtonDown(0))
-                _startDragPoint = Input.mousePosition;
-
             if (Input.GetMouseButton(0))
             {
                 MouseAction.Invoke(Define.MouseEvent.Press);
-                MouseAction.Invoke(Define.MouseEvent.Drag);
                 _pressed = true;
             }
             else 
