@@ -21,3 +21,11 @@
       - Define 스크립트: 카메라 모드, 입력 이벤트 (마우스, 키보드) 의 종류를 규정하는 enum들을 설계함
     - Controllers 폴더
       - CameraController 스크립트 : 메인 카메라 오브젝트에 사용될 스크립트, 여러 event 상황에서 메인 카메라 오브젝트의 동작 로직을 설계한 function을 정의함.
+
+3. 2024년 1월 23일 (월)
+  - 진행할 작업들
+    - Unit.cs, ControllableUnit.cs, unControllableUnit.cs, UnitController.cs 추가 계획
+      - Unit.cs: MonoBehavior을 상속받음, ControllableUnit.cs, AIControllableUnit.cs 의 추상클래스, 공통 매서드 ...Control() 포함
+      - ControllableUnit.cs : 조종가능한 유닛 (ex 플레이어가 보유한 아군 케릭터들 중 스테이지에 출진한 케릭터)의 마더 클래스, 정의 및 구현
+      - AIControllableUnit.cs : AI가 조종가능한 유닛 (ex 적 유닛, 우호적 중립, 적대적 중립)의 마더 클래스, 정의 및 구현
+      - UnitController.cs : ControllableUnit.cs 와 상호작용, 플레이어가 유닛을 컨트롤할 수 있는 인터페이스를 정의 및 구현
