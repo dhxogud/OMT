@@ -1,88 +1,111 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-
 public class CameraController : MonoBehaviour
 {
-
     [SerializeField]
     Define.CameraMode _mode = Define.CameraMode.QuarterView;
-
+    Vector3 _look = Vector3.zero;
     [SerializeField]
-    float _dist = 10.0f;
-    float _moveSpeed = 5.0f;
-    Quaternion init_rot = Quaternion.Euler(50.0f, 0.0f, 0.0f);
+    GameObject _target;
+
+    const float _minYPos = 5.0f, _maxYPos = 30.0f;
 
     void Start() 
     {
-        Init();
-
-        Managers.Input.KeyAction -= OnKeyboard;
-        Managers.Input.KeyAction += OnKeyboard;
-        Managers.Input.MouseAction -= OnMouseClicked;
-        Managers.Input.MouseAction += OnMouseClicked;
+        Managers.Input.MouseAction -= MouseClickAction;
+        Managers.Input.MouseAction += MouseClickAction;
     }
-
-    void OnMouseClicked(Define.MouseEvent evt)
+    void MouseClickAction(Define.MouseEvent evt)
     {
-        if (evt == Define.MouseEvent.Click)
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
-            {
-                if (hit.collider.gameObject.tag == "Unit")
-                {
+        if (evt != Define.MouseEvent.Click)
+            return;
 
-                }
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            if (hit.collider.gameObject.tag == "Unit")
+            {
+                _target = hit.collider.gameObject;
             }
         }
     }
-
-    void OnKeyboard()
-    {
-        Vector3 axis = transform.position + transform.forward * _dist;
-        if (Input.GetKey(KeyCode.Q))
-        {
-            transform.position += -transform.right * _moveSpeed * Time.deltaTime;
-            transform.LookAt(axis);
-        }
-        else if (Input.GetKey(KeyCode.E))
-        {
-            transform.position += transform.right * _moveSpeed * Time.deltaTime;
-            transform.LookAt(axis);
-        }
-
-        Vector3 dir = Vector3.zero;
-        if (Input.GetKey(KeyCode.W))
-            dir += transform.forward;
-        if (Input.GetKey(KeyCode.A))
-            dir += -transform.right;
-        if (Input.GetKey(KeyCode.S))
-            dir += -transform.forward;
-        if (Input.GetKey(KeyCode.D))
-            dir += transform.right;
-        dir.y = 0.0f;
-        transform.localPosition += dir.normalized * _moveSpeed * Time.deltaTime;
-    }
-
     void LateUpdate() 
     {
-        if (Input.mouseScrollDelta.y > 0 && transform.position.y > 5.0f)
+        if (_mode == Define.CameraMode.QuarterView)
         {
-            transform.position += transform.forward * _moveSpeed * Time.deltaTime;
-        }
-        else if (Input.mouseScrollDelta.y < 10.0f)
-        {
-            transform.position -= transform.forward * _moveSpeed * Time.deltaTime;
+            if (_target != null)
+            {
+                ParallelMove();
+                OrbitalMove();
+                Zoom();
+            }
+            else
+            {
+                MoveToTarget();
+            }
         }
     }
-
-    void Init()
+    void MoveToTarget()
     {
-        transform.rotation = init_rot;
+        Vector3 prev = transform.position;
+        Vector3 dest = _target.transform.position - _look;
+        transform.position = Vector3.Slerp(transform.position, dest, 0.1f);
+        _look += transform.position - prev;
+
+        Debug.DrawLine(transform.position, _look, Color.red, 10.0f);
+
+        if (Vector3.Distance(transform.position, dest) < 0.001f)
+        {
+            _target = null;
+        }
+    }
+    void ParallelMove()
+    {
+        Vector3 moveDir = Vector3.zero;
+        if (Input.GetKey(KeyCode.W))
+            moveDir += transform.forward;
+        if (Input.GetKey(KeyCode.S))
+            moveDir += transform.forward * -1;
+        if (Input.GetKey(KeyCode.D))
+            moveDir += transform.right;
+        if (Input.GetKey(KeyCode.A))
+            moveDir += transform.right * -1;
+
+        moveDir.y = 0.0f;
+        moveDir = moveDir.normalized * 30.0f * Time.deltaTime;
+        transform.position += moveDir;
+        _look += moveDir; // 
+    }
+    
+    void OrbitalMove()
+    {
+        Vector3 delta = transform.position - _look;
+        if (Input.GetKey(KeyCode.Q))
+            delta = Quaternion.AngleAxis(1.0f, Vector3.up) * delta;
+        else if (Input.GetKey(KeyCode.E))
+            delta = Quaternion.AngleAxis(1.0f, Vector3.down) * delta;
+
+        transform.position = _look + delta;
+        transform.LookAt(_look);
+    }
+    void Zoom()
+    {
+        float delta = Input.mouseScrollDelta.y;
+        if (delta > 0 && transform.position.y < _maxYPos)
+        {
+            Vector3 dir = new Vector3(0.0f, delta, 0.0f) * 30.0f * Time.deltaTime;
+            transform.position += dir;
+            _look += dir;
+        }
+        else if (delta < 0 && transform.position.y > _minYPos)
+        {
+            Vector3 dir = new Vector3(0.0f, delta, 0.0f) * 30.0f * Time.deltaTime;
+            transform.position += dir;
+            _look += dir;
+        }
     }
 }

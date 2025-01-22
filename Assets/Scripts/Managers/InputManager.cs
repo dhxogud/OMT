@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 
 public class InputManager
@@ -7,9 +8,13 @@ public class InputManager
     public Action KeyAction;
     public Action<Define.MouseEvent> MouseAction = null;
     private bool _pressed;
+    public Vector3 _startDragPoint;
 
     public void OnUpdate()
     {
+        // if (EventSystem.current.IsPointerOverGameObject())
+        //     return;
+            
         if (Input.anyKey && KeyAction != null)
             KeyAction.Invoke();
 

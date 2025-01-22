@@ -14,8 +14,7 @@ public class Define
         Click,
         Press,
         Drag,
-        WheelClick,
-        WheelPress,
+        Scroll
     }
 
     public enum Objects
