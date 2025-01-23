@@ -20,7 +20,7 @@ public class Managers : MonoBehaviour
 
     void Update() 
     {
-        Input.OnUpdate();
+        _input.OnUpdate();
     }
 
     static void Init()

@@ -1,27 +1,15 @@
 using System;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
-public class CameraController : MonoBehaviour
+public class CameraController : BaseController
 {
     [SerializeField]
     Define.CameraMode _mode = Define.CameraMode.QuarterView;
     Vector3 _look = Vector3.zero;
-    [SerializeField]
-    GameObject _target;
 
-    const float _minYPos = 5.0f, _maxYPos = 30.0f;
-
-    void Start() 
+    public override void MouseClickAction(Define.MouseButtonEvent evt)
     {
-        Managers.Input.MouseAction -= MouseClickAction;
-        Managers.Input.MouseAction += MouseClickAction;
-    }
-    void MouseClickAction(Define.MouseEvent evt)
-    {
-        if (evt != Define.MouseEvent.Click)
+        if (evt != Define.MouseButtonEvent.Click)
             return;
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -33,22 +21,15 @@ public class CameraController : MonoBehaviour
             }
         }
     }
-    void LateUpdate() 
+
+    public override void MouseWheelAction(Define.MouseWheelEvent evt)
     {
-        if (_mode == Define.CameraMode.QuarterView)
-        {
-            if (_target != null)
-            {
-                ParallelMove();
-                OrbitalMove();
-                Zoom();
-            }
-            else
-            {
-                MoveToTarget();
-            }
-        }
+        if (evt == Define.MouseWheelEvent.Up)
+            Zoom(1);
+        else if (evt == Define.MouseWheelEvent.Down)
+            Zoom(-1);
     }
+
     void MoveToTarget()
     {
         Vector3 prev = transform.position;
@@ -63,6 +44,26 @@ public class CameraController : MonoBehaviour
             _target = null;
         }
     }
+    void LateUpdate() 
+    {
+        if (_mode == Define.CameraMode.QuarterView)
+        {
+            if (_target != null)
+                MoveToTarget();
+            else
+            {
+                ParallelMove();
+                OrbitalMove();
+            }
+
+        }
+    }
+
+    void Move(Vector3 dir)
+    {
+
+    }
+
     void ParallelMove()
     {
         Vector3 moveDir = Vector3.zero;
@@ -78,9 +79,8 @@ public class CameraController : MonoBehaviour
         moveDir.y = 0.0f;
         moveDir = moveDir.normalized * 30.0f * Time.deltaTime;
         transform.position += moveDir;
-        _look += moveDir; // 
+        _look += moveDir;
     }
-    
     void OrbitalMove()
     {
         Vector3 delta = transform.position - _look;
@@ -92,20 +92,16 @@ public class CameraController : MonoBehaviour
         transform.position = _look + delta;
         transform.LookAt(_look);
     }
-    void Zoom()
+    void Zoom(int scrollDir)
     {
-        float delta = Input.mouseScrollDelta.y;
-        if (delta > 0 && transform.position.y < _maxYPos)
-        {
-            Vector3 dir = new Vector3(0.0f, delta, 0.0f) * 30.0f * Time.deltaTime;
-            transform.position += dir;
-            _look += dir;
-        }
-        else if (delta < 0 && transform.position.y > _minYPos)
-        {
-            Vector3 dir = new Vector3(0.0f, delta, 0.0f) * 30.0f * Time.deltaTime;
-            transform.position += dir;
-            _look += dir;
-        }
+        Vector3 origin = transform.position;
+        transform.position += new Vector3(0.0f, scrollDir, 0.0f) * 10.0f * Time.deltaTime;
+        _look = transform.position + (_look - origin);
+    }
+
+    void Init()
+    {
+        _mode = Define.CameraMode.QuarterView;
+        _look = Vector3.zero;
     }
 }

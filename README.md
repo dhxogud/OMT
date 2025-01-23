@@ -25,7 +25,8 @@
 3. 2024년 1월 23일 (월)
   - 진행할 작업들
     - Unit.cs, ControllableUnit.cs, unControllableUnit.cs, UnitController.cs 추가 계획
-      - Unit.cs: MonoBehavior을 상속받음, ControllableUnit.cs, AIControllableUnit.cs 의 추상클래스, 공통 매서드 ...Control() 포함
-      - ControllableUnit.cs : 조종가능한 유닛 (ex 플레이어가 보유한 아군 케릭터들 중 스테이지에 출진한 케릭터)의 마더 클래스, 정의 및 구현
+      - Unit.cs: MonoBehavior을 상속받음, PlayerControllableUnit.cs, AIControllableUnit.cs 의 추상클래스, 공통 멤버 변수 및 
+          매서드 ...Control() 포함
+      - PlayerControllableUnit.cs : 조종가능한 유닛 (ex 플레이어가 보유한 아군 케릭터들 중 스테이지에 출진한 케릭터)의 마더 클래스, 정의 및 구현
       - AIControllableUnit.cs : AI가 조종가능한 유닛 (ex 적 유닛, 우호적 중립, 적대적 중립)의 마더 클래스, 정의 및 구현
       - UnitController.cs : ControllableUnit.cs 와 상호작용, 플레이어가 유닛을 컨트롤할 수 있는 인터페이스를 정의 및 구현
