@@ -8,7 +8,6 @@ public class Define
     {
         QuarterView
     }
-    
     public enum MouseButtonEvent
     {
         Click,
@@ -20,23 +19,5 @@ public class Define
     {
         Up,
         Down
-    }
-
-    public enum KeyCodes
-    {
-        Q,
-        W,
-        E,
-        A,
-        S,
-        D
-    }
-
-    public enum Objects
-    {
-        Unit,
-        Enemy,
-        Environment,
-        Field
     }
 }

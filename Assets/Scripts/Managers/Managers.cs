@@ -1,15 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
 public class Managers : MonoBehaviour
 {
-    static Managers _instance ;
+    static Managers _instance;
     InputManager _input = new InputManager();
 
-    
     public static Managers Instance { get { Init(); return _instance; }}
     public static InputManager Input { get { return Instance._input; } }
 
@@ -36,5 +36,7 @@ public class Managers : MonoBehaviour
             DontDestroyOnLoad(go);
             _instance = go.GetComponent<Managers>();
         }
+        
+        _instance._input.Init();
     }
 }

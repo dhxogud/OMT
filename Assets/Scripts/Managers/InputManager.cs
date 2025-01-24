@@ -1,7 +1,6 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UIElements;
 
 public class InputManager
 {
@@ -9,13 +8,14 @@ public class InputManager
     public Action<Define.MouseButtonEvent> MouseButtonAction = null;
     public Action<Define.MouseWheelEvent> MouseWheelAction = null;
     private bool _pressed;
-    public Vector3 _startDragPoint;
 
     public void OnUpdate()
     {
         if (Input.anyKey && KeyAction != null)
+        {
             KeyAction.Invoke();
-
+        }
+        
         if (MouseButtonAction != null)
         {
             if (Input.GetMouseButton(0))
@@ -32,7 +32,6 @@ public class InputManager
                 }
             }
         }
-
         if (MouseWheelAction != null)
         {
             if (Input.mouseScrollDelta.y > 0)
@@ -40,5 +39,9 @@ public class InputManager
             else if (Input.mouseScrollDelta.y < 0)
                 MouseWheelAction.Invoke(Define.MouseWheelEvent.Down);
         }
+    }
+    public void Init()
+    {
+        _pressed = false;
     }
 }
