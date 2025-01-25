@@ -1,5 +1,5 @@
 제작 기록
-1. 2024년 1월 2일 (목), 유니티 게임 엔진 기반, 턴제 전략 3d 시뮬레이션 게임 구상 시작(XCOM식)
+1. 2025년 1월 2일 (목), 유니티 게임 엔진 기반, 턴제 전략 3d 시뮬레이션 게임 구상 시작(XCOM식)
    - 플랫폼 및 배포 계획 < Platform & Release >
    - 현재 게임 플랫폼은 PC, 모바일 2 가지 버전으로 일단 결정 (이유: 내가 가장 익숙한 디바이스들이기 때문에 테스팅과 타 게임들과 비교하기 쉬울거라 생각하기 때문에), PC 버전 먼저 인터페이스를 구현.
    - 스테이지식 진행 게임 구조 임시, 이후에 스테이지가 진행함에 따라 "유닛들의 스테이터스 수치나, 새로운 능력을 해금할 수 있는 수단을 마련해 둘 생각"
@@ -13,7 +13,7 @@
        순서는 (1 -> 3 -> 2 -> 3) 식으로 순회함. 플레이어가 유닛을 컨트롤할 수 있는 순간은 <1> 뿐이며, UI를 조작할 수 있는
      - 필드의 노드들과 유닛들의 정보는 직접 클릭(혹은 UI로 간편하게)으로 확인하고, 조작은 UI의 버튼 이벤트와 마우스 이벤트로 가능하다.
      
-2. 2024년 1월 18일 (토)
+2. 2025년 1월 18일 (토)
   - 현재까지 작업한 부분 
     - Managers 폴더
       - Mangers 스크립트: @Manager 이름의 게임 오브젝트를 생성하고, InputManager과 같은 분할된 Manager들이 포함됨
@@ -22,7 +22,7 @@
     - Controllers 폴더
       - CameraController 스크립트 : 메인 카메라 오브젝트에 사용될 스크립트, 여러 event 상황에서 메인 카메라 오브젝트의 동작 로직을 설계한 function을 정의함.
 
-3. 2024년 1월 23일 (월)
+3. 2025년 1월 23일 (월)
   - 진행할 작업들
     - Unit.cs, ControllableUnit.cs, unControllableUnit.cs, UnitController.cs 추가 계획
       - Unit.cs: MonoBehavior을 상속받음, PlayerControllableUnit.cs, AIControllableUnit.cs 의 추상클래스, 공통 멤버 변수 및 
@@ -30,3 +30,14 @@
       - PlayerControllableUnit.cs : 조종가능한 유닛 (ex 플레이어가 보유한 아군 케릭터들 중 스테이지에 출진한 케릭터)의 마더 클래스, 정의 및 구현
       - AIControllableUnit.cs : AI가 조종가능한 유닛 (ex 적 유닛, 우호적 중립, 적대적 중립)의 마더 클래스, 정의 및 구현
       - UnitController.cs : ControllableUnit.cs 와 상호작용, 플레이어가 유닛을 컨트롤할 수 있는 인터페이스를 정의 및 구현
+
+4. 2025년 1월 26일 (일)
+  - 진행중인 작업 설계변경안
+    - 현재 Controller의 마더 추상 클래스인 BaseController 스크립트를 만든 후, InputManager의 각종 Input 타입의 Action에 등록할 추상클래스들을 정의함.
+    - 위에서 언급한 Unit 스크립트을 컨트롤할 수 있는 UnitController.cs 를 어떤 게임 오브젝트에 붙여야할까 고민하던 와중, 더 좋은 방안이 떠오름
+    - BaseScene 추상 클래스를 만들고, extend 한 GameScene과 LobbyScene을 만들어 GameScene안에서 "내가 클릭해서 선택한 게임 오브젝트" 를 저장하는 멤버 변수를
+      만들고, 기존 ...Controller안에서 정의한 MouseClickAction에서 Ray를 만드는 것을 이쪽으로 옮기고, GameScene안에서 RayCast 판정을 할 수 있도록 설계한다음
+    - GameScene에서 Controller 클래스들에게 이벤트 처리 값을 전달해주는 걸로 변경하겠음. 
+    - 결론
+      1. BaseScene.cs -> (GameScene, LobbyScene) 스크립트를 만들고, 
+      2. Controllable.cs 을 만들어 Raycast 한 게임오브젝트 하위에 이 스크립트가 존재하다면, 이 스크립트 안에 정의된 매서드를 호출할 수 있게 만들어 놓겠다.

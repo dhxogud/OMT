@@ -36,7 +36,11 @@ public class Managers : MonoBehaviour
             DontDestroyOnLoad(go);
             _instance = go.GetComponent<Managers>();
         }
-        
-        _instance._input.Init();
+
+    }
+    
+    public static void Clear()
+    {
+        Input.Clear();
     }
 }

@@ -40,8 +40,10 @@ public class InputManager
                 MouseWheelAction.Invoke(Define.MouseWheelEvent.Down);
         }
     }
-    public void Init()
+    public void Clear()
     {
-        _pressed = false;
+        KeyAction = null;
+        MouseButtonAction = null;
+        MouseWheelAction = null;
     }
 }

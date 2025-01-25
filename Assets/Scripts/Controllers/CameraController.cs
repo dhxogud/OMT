@@ -6,10 +6,12 @@ public class CameraController : BaseController
     [SerializeField]
     Define.CameraMode _mode = Define.CameraMode.QuarterView;
     Vector3 _look = Vector3.zero;
+    GameObject _target;
+    KeyCode[] _keyCodes = new KeyCode[] { KeyCode.W, KeyCode.S, KeyCode.A, KeyCode.D, KeyCode.Q, KeyCode.E };
 
     public override void Init()
     {
-        KeyCodes = new KeyCode[] { KeyCode.W, KeyCode.S, KeyCode.A, KeyCode.D, KeyCode.Q, KeyCode.E };
+        KeyCodes = _keyCodes;
 
         base.Init();
     }
@@ -41,15 +43,11 @@ public class CameraController : BaseController
 
     public override void MouseClickAction(Define.MouseButtonEvent evt)
     {
-        if (evt != Define.MouseButtonEvent.Click)
-            return;
-
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        if (evt == Define.MouseButtonEvent.Click)
         {
-            if (hit.collider.gameObject.tag == "Unit")
+            if (Physics.Raycast(MouseRay, out RaycastHit hit, LayerMask.GetMask("Unit")))
             {
-                Target = hit.collider.gameObject;
+                _target = hit.collider.gameObject;
             }
         }
     }
@@ -72,22 +70,20 @@ public class CameraController : BaseController
     {
         if (_mode == Define.CameraMode.QuarterView)
         {
-            if (Target != null)
+            if (_target != null)
                 MoveToTarget();
         }
     }
     void MoveToTarget()
     {
         Vector3 prev = transform.position;
-        Vector3 dest = Target.transform.position - _look;
+        Vector3 dest = _target.transform.position - _look;
         transform.position = Vector3.Slerp(transform.position, dest, 0.1f);
         _look += transform.position - prev;
 
-        Debug.DrawLine(transform.position, _look, Color.red, 10.0f);
-
         if (Vector3.Distance(transform.position, dest) < 0.001f)
         {
-            Target = null;
+            _target = null;
         }
     }
 }

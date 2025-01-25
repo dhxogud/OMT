@@ -4,9 +4,9 @@ using UnityEngine;
 
 public abstract class BaseController : MonoBehaviour
 {
-    public GameObject Target;
-    public KeyCode[] KeyCodes;
-    public Dictionary<KeyCode, int> KeyCodesDict = new Dictionary<KeyCode, int>();
+    public Ray MouseRay;
+    protected KeyCode[] KeyCodes;
+    protected Dictionary<KeyCode, int> KeyCodesDict = new Dictionary<KeyCode, int>();
 
     void Start() 
     {
@@ -26,6 +26,11 @@ public abstract class BaseController : MonoBehaviour
             KeyCodesDict.Add(key, 0);
         }
     }
+    private void LateUpdate() 
+    {
+        MouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+    }
+
     public virtual void OnKeyAction()
     {
         if (KeyCodesDict != null)

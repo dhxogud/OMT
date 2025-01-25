@@ -8,7 +8,7 @@ public class UnitController : BaseController
 
     public override void Init()
     {
-        KeyCodes = new KeyCode[] { KeyCode.T, KeyCode.Y, KeyCode.U};
+        KeyCodes = new KeyCode[] { KeyCode.Alpha0, KeyCode.Alpha1, KeyCode.Alpha2};
 
         base.Init();
     }
