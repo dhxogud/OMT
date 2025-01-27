@@ -41,16 +41,6 @@ public class CameraController : BaseController
         transform.LookAt(_look);
     }
 
-    public override void MouseClickAction(Define.MouseButtonEvent evt)
-    {
-        if (evt == Define.MouseButtonEvent.Click)
-        {
-            if (Physics.Raycast(MouseRay, out RaycastHit hit, LayerMask.GetMask("Unit")))
-            {
-                _target = hit.collider.gameObject;
-            }
-        }
-    }
     public override void MouseWheelAction(Define.MouseWheelEvent evt)
     {
         if (evt == Define.MouseWheelEvent.Up)
@@ -85,5 +75,10 @@ public class CameraController : BaseController
         {
             _target = null;
         }
+    }
+
+    public void SetTarget(GameObject target)
+    {
+        _target = target;
     }
 }

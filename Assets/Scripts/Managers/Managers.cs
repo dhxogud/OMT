@@ -9,10 +9,11 @@ public class Managers : MonoBehaviour
 {
     static Managers _instance;
     InputManager _input = new InputManager();
+    SceneManagerEx _scene = new SceneManagerEx();
 
-    public static Managers Instance { get { Init(); return _instance; }}
+    public static Managers Instance { get { Init(); return _instance; } }
     public static InputManager Input { get { return Instance._input; } }
-
+    public static SceneManagerEx Scene { get { return Instance._scene; } }
     void Start() 
     {
         Init();
@@ -42,5 +43,6 @@ public class Managers : MonoBehaviour
     public static void Clear()
     {
         Input.Clear();
+        Scene.Clear();
     }
 }

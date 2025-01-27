@@ -4,7 +4,6 @@ using UnityEngine;
 
 public abstract class BaseController : MonoBehaviour
 {
-    public Ray MouseRay;
     protected KeyCode[] KeyCodes;
     protected Dictionary<KeyCode, int> KeyCodesDict = new Dictionary<KeyCode, int>();
 
@@ -14,8 +13,6 @@ public abstract class BaseController : MonoBehaviour
 
         Managers.Input.KeyAction -= OnKeyAction;
         Managers.Input.KeyAction += OnKeyAction;
-        Managers.Input.MouseButtonAction -= MouseClickAction;
-        Managers.Input.MouseButtonAction += MouseClickAction;
         Managers.Input.MouseWheelAction -= MouseWheelAction;
         Managers.Input.MouseWheelAction += MouseWheelAction;
     }
@@ -25,10 +22,6 @@ public abstract class BaseController : MonoBehaviour
         {
             KeyCodesDict.Add(key, 0);
         }
-    }
-    private void LateUpdate() 
-    {
-        MouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
     }
 
     public virtual void OnKeyAction()
@@ -44,6 +37,5 @@ public abstract class BaseController : MonoBehaviour
             }
         }
     }
-    public abstract void MouseClickAction(Define.MouseButtonEvent evt);
     public abstract void MouseWheelAction(Define.MouseWheelEvent evt);
 }

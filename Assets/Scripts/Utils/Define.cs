@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class Define
 {
-    public enum CameraMode
-    {
-        QuarterView
-    }
     public enum MouseButtonEvent
     {
         Click,
@@ -20,4 +16,21 @@ public class Define
         Up,
         Down
     }
+    public enum UIEvent
+    {
+        Click,
+        Press,
+        Drag
+    }
+    public enum Scene
+    {
+        Unknown,
+        Game,
+        Lobby
+    }
+    public enum CameraMode
+    {
+        QuarterView,
+    }
+
 }
