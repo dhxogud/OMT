@@ -4,17 +4,12 @@ using UnityEngine;
 
 public class Define
 {
-    public enum MouseButtonEvent
+    public enum MouseEvent
     {
         Click,
         Press,
         Drag,
         MiddleClick,
-    }
-    public enum MouseWheelEvent
-    {
-        Up,
-        Down
     }
     public enum UIEvent
     {
@@ -27,6 +22,13 @@ public class Define
         Unknown,
         Game,
         Lobby
+    }
+    public enum Side
+    {
+        Player,
+        Friend,
+        Enemy,
+
     }
     public enum CameraMode
     {

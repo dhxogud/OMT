@@ -1,41 +1,66 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public abstract class BaseController : MonoBehaviour
+public class BaseController : MonoBehaviour
 {
-    protected KeyCode[] KeyCodes;
-    protected Dictionary<KeyCode, int> KeyCodesDict = new Dictionary<KeyCode, int>();
+    public Dictionary<KeyCode, int> KeyCodesDict = null;
+    public GameObject Target;
+    Ray mousePosRay;
 
     void Start() 
     {
         Init();
-
-        Managers.Input.KeyAction -= OnKeyAction;
-        Managers.Input.KeyAction += OnKeyAction;
-        Managers.Input.MouseWheelAction -= MouseWheelAction;
-        Managers.Input.MouseWheelAction += MouseWheelAction;
     }
-    public virtual void Init()
+
+    void Update()
     {
-        foreach (KeyCode key in KeyCodes)
-        {
-            KeyCodesDict.Add(key, 0);
-        }
+        mousePosRay = Camera.main.ScreenPointToRay(Input.mousePosition);
     }
 
     public virtual void OnKeyAction()
     {
         if (KeyCodesDict != null)
         {
-            foreach (KeyCode key in KeyCodes)
+            KeyCode[] keys = KeyCodesDict.Keys.ToArray<KeyCode>();
+            for (int i = 0; i < keys.Length; i++)
             {
-                if (Input.GetKey(key))
-                    KeyCodesDict[key] = 1;
+                if (Input.GetKey(keys[i]))
+                    KeyCodesDict[keys[i]] = 1;
                 else
-                    KeyCodesDict[key] = 0;
+                    KeyCodesDict[keys[i]] = 0;
             }
         }
     }
-    public abstract void MouseWheelAction(Define.MouseWheelEvent evt);
+
+    public void BindKeysToDict(KeyCode[] keys)
+    {
+        KeyCodesDict = new Dictionary<KeyCode, int>();
+        foreach (KeyCode key in keys)
+            KeyCodesDict.Add(key, 0);
+    }
+
+    public void MouseClickAction(Define.MouseEvent evt)
+    {
+        if (evt == Define.MouseEvent.Click)
+        {
+            if (Physics.Raycast(mousePosRay, out RaycastHit hit))
+            {
+                if (hit.collider.gameObject)
+                {
+                    Target = hit.collider.gameObject;
+                }
+            }
+        }
+    }
+
+    public virtual void Init()
+    {
+        Managers.Input.KeyAction -= OnKeyAction;
+        Managers.Input.KeyAction += OnKeyAction;
+        Managers.Input.MouseAction -= MouseClickAction;
+        Managers.Input.MouseAction += MouseClickAction;
+    }
 }

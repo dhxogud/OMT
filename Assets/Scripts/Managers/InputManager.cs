@@ -5,8 +5,8 @@ using UnityEngine;
 public class InputManager
 {
     public Action KeyAction = null;
-    public Action<Define.MouseButtonEvent> MouseButtonAction = null;
-    public Action<Define.MouseWheelEvent> MouseWheelAction = null;
+    public Action<Define.MouseEvent> MouseAction = null;
+    public Action<int> MouseWheelAction = null;
     private bool _pressed;
 
     public void OnUpdate()
@@ -16,18 +16,18 @@ public class InputManager
             KeyAction.Invoke();
         }
         
-        if (MouseButtonAction != null)
+        if (MouseAction != null)
         {
             if (Input.GetMouseButton(0))
             {
-                MouseButtonAction.Invoke(Define.MouseButtonEvent.Press);
+                MouseAction.Invoke(Define.MouseEvent.Press);
                 _pressed = true;
             }
             else 
             {
                 if (_pressed)
                 {
-                    MouseButtonAction.Invoke(Define.MouseButtonEvent.Click);
+                    MouseAction.Invoke(Define.MouseEvent.Click);
                     _pressed = false;
                 }
             }
@@ -35,15 +35,15 @@ public class InputManager
         if (MouseWheelAction != null)
         {
             if (Input.mouseScrollDelta.y > 0)
-                MouseWheelAction.Invoke(Define.MouseWheelEvent.Up);
+                MouseWheelAction.Invoke(1);
             else if (Input.mouseScrollDelta.y < 0)
-                MouseWheelAction.Invoke(Define.MouseWheelEvent.Down);
+                MouseWheelAction.Invoke(-1);
         }
     }
     public void Clear()
     {
         KeyAction = null;
-        MouseButtonAction = null;
+        MouseAction = null;
         MouseWheelAction = null;
     }
 }
