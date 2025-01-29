@@ -4,30 +4,34 @@ using UnityEngine;
 
 public class UnitController : MonoBehaviour
 {
-    GameObject _go;
-    
-    void MouseClickAction(Define.MouseEvent evt)
-    {
-        if (evt != Define.MouseEvent.Click)
-            return;
-
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit))
-        {
-            _go = hit.collider.gameObject;
-        }
-    }
+    Controllable Self = new Controllable();
+    // Dictionary<KeyCode, Skill> _skills = new Dictionary<KeyCode, Skill>();
 
     void Start() 
     {
-        Init();
+        Managers.Input.MouseAction -= MouseAction;
+        Managers.Input.MouseAction += MouseAction;
+        Managers.Input.KeyAction -= KeyAction;
+        Managers.Input.KeyAction += KeyAction;
     }
-    
-    void Init()
+
+
+    void MouseAction(Define.MouseEvent evt)
     {
-        Managers.Input.MouseAction -= MouseClickAction;
-        Managers.Input.MouseAction += MouseClickAction;
-        
-        _go = null;
+        if (evt == Define.MouseEvent.Click)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit))
+            {
+                Self.Attack(hit.collider.gameObject);
+            }
+        }
+    }
+    void KeyAction()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            Debug.Log(KeyCode.Alpha1);
+        }
     }
 }
