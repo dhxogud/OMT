@@ -1,91 +1,85 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.XR;
 
-public class CameraController : MonoBehaviour
+public class CameraController
 {
     Define.CameraMode _mode;
     Vector3 _offset = new Vector3(0.0f, 15.0f, -20.0f);
     Vector3 _look = Vector3.zero;
-    GameObject _target;
+    Transform _transform;
+    GameObject target;
 
-    void Start() 
-    {
-        Managers.Input.MouseAction -= ClickTarget;
-        Managers.Input.MouseAction += ClickTarget;
-        Managers.Input.KeyAction -= Move;
-        Managers.Input.KeyAction += Move;
-        Managers.Input.MouseWheelAction -= Zoom;
-        Managers.Input.MouseWheelAction += Zoom;
-    }
-    void LateUpdate() 
+    public void OnLateUpdate()
     {
         if (_mode == Define.CameraMode.QuarterView)
         {
-            if (_target != null)
+            if (target != null)
             {
-                MoveToTarget();
+                Vector3 prev = _transform.position;
+                Vector3 dest = target.transform.position - _look;
+                _transform.position = Vector3.Slerp(_transform.position, dest, 0.1f);
+                _look += _transform.position - prev;
+                if (Vector3.Distance(_transform.position, dest) < 0.001f)
+                {
+                    target = null;
+                }
             }
         }
     }
-    void ClickTarget(Define.MouseEvent evt)
+
+    // Focusing
+    void OnMouseButtonAction(Define.MouseEvent evt)
     {
         if (evt == Define.MouseEvent.Click)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, LayerMask.GetMask("Unit")))
             {
-                _target = hit.collider.gameObject;
+                target = hit.collider.gameObject;
             }
         }
     }
-    void Move()
+    
+    // Move & Rotate
+    void KeyAction()
     {
         // WASD : Parallel Motion On XZ-plane
-        Vector3 moveDir = transform.forward * Input.GetKey(KeyCode.W).ConvertToInt()
-            + -transform.forward * Input.GetKey(KeyCode.S).ConvertToInt()
-            + transform.right * Input.GetKey(KeyCode.D).ConvertToInt()
-            + -transform.right * Input.GetKey(KeyCode.A).ConvertToInt();
+        Vector3 moveDir = _transform.forward * Input.GetKey(KeyCode.W).ConvertToInt()
+            + -_transform.forward * Input.GetKey(KeyCode.S).ConvertToInt()
+            + _transform.right * Input.GetKey(KeyCode.D).ConvertToInt()
+            + -_transform.right * Input.GetKey(KeyCode.A).ConvertToInt();
             
         moveDir.y = 0.0f;
         moveDir = moveDir.normalized * 30.0f * Time.deltaTime;
-        transform.position += moveDir;
+        _transform.position += moveDir;
         _look += moveDir;
 
         // QE : Orbital Motion From Y-axis
-        Vector3 delta = transform.position - _look;
+        Vector3 delta = _transform.position - _look;
         Vector3 axis = Vector3.up * Input.GetKey(KeyCode.Q).ConvertToInt() + Vector3.down * Input.GetKey(KeyCode.E).ConvertToInt();
         delta = Quaternion.AngleAxis(0.5f, axis) * delta;
-        transform.position = _look + delta;
-        transform.LookAt(_look);
+        _transform.position = _look + delta;
+        _transform.LookAt(_look);
     }
 
-    // mouseScrolldelta.y
-    void Zoom(int scrollDir)
+    // Zoom
+    void OnMouseWheelAction(int scrollDir)
     {
-        Vector3 origin = transform.position;
-        transform.position += new Vector3(0.0f, scrollDir, 0.0f) * 10.0f * Time.deltaTime;
-        _look = transform.position + (_look - origin);
+        Vector3 origin = _transform.position;
+        _transform.position += new Vector3(0.0f, scrollDir, 0.0f) * 10.0f * Time.deltaTime;
+        _look = _transform.position + (_look - origin);
     }
-    void MoveToTarget()
+    public void Init()
     {
-        Vector3 prev = transform.position;
-        Vector3 dest = _target.transform.position - _look;
-        transform.position = Vector3.Slerp(transform.position, dest, 0.1f);
-        _look += transform.position - prev;
-
-        if (Vector3.Distance(transform.position, dest) < 0.001f)
-        {
-            _target = null;
-        }
-    }
-    public void Init(Define.Scene sceneType)
-    {
-        if (sceneType == Define.Scene.Game)
-            _mode = Define.CameraMode.QuarterView;
-
-        _look = transform.position - _offset;
-        _target = null;
+        _transform = Camera.main.transform;
+        Managers.Input.KeyAction -= KeyAction;
+        Managers.Input.KeyAction += KeyAction;
+        Managers.Input.MouseButtonAction -= OnMouseButtonAction;
+        Managers.Input.MouseButtonAction += OnMouseButtonAction;
+        Managers.Input.MouseWheelAction -= OnMouseWheelAction;
+        Managers.Input.MouseWheelAction += OnMouseWheelAction;
+        _look = _transform.position - _offset;
+        _transform.LookAt(_look);
     }
 }

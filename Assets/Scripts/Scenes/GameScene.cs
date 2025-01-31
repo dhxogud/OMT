@@ -5,15 +5,14 @@ using UnityEngine;
 
 public class GameScene : BaseScene
 {
-    UnitController controller;
     protected override void Init()
     {
         base.Init();
         
         SceneType = Define.Scene.Game;
-        Camera.main.AddComponent<CameraController>().Init(SceneType);
+        // @Controller 오브젝트 인스턴스 및 초기화 작업 들어갈 예정?
     }
-    
+
     public override void Clear()
     {
         Debug.Log("Clear GameScene!");

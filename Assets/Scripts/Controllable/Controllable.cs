@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Controllable
+public class Controllable : MonoBehaviour
 {
     enum Type
     {
@@ -16,5 +16,9 @@ public class Controllable
     public void Attack(GameObject go)
     {
         Debug.Log($"{go}를 공격하라고 명령받음!");
+    }
+    public void Test()
+    {
+        Debug.Log($"{name}");
     }
 }
