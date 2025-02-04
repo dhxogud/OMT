@@ -5,12 +5,59 @@ using UnityEngine;
 
 public class GameScene : BaseScene
 {
+    // Map
+    CameraController cameraController = new CameraController();
+    UnitController unitController = new UnitController();
+    // int turnCnt;
+
+    void LateUpdate() 
+    {
+        cameraController.OnLateUpdate();
+    }
+
+
+    void KeyAction()
+    {
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            cameraController.Move(unitController.GetNextUnit().gameObject);
+        }
+
+        cameraController.Move();
+        cameraController.Rotate();
+
+    }
+
+    void MouseButtonAction(Define.MouseEvent evt)
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, LayerMask.GetMask("Unit")))
+        {
+            Debug.Log(hit.collider.gameObject.name);
+        }
+    }
+
+    void MouseWheelAction(int delta)
+    {
+        cameraController.Zoom(delta);
+    }
+
     protected override void Init()
     {
         base.Init();
         
         SceneType = Define.Scene.Game;
-        // @Controller 오브젝트 인스턴스 및 초기화 작업 들어갈 예정?
+        // turnCnt = 0;
+
+        Managers.Input.KeyAction -= KeyAction;
+        Managers.Input.KeyAction += KeyAction;
+        Managers.Input.MouseButtonAction -= MouseButtonAction;
+        Managers.Input.MouseButtonAction += MouseButtonAction;
+        Managers.Input.MouseWheelAction -= MouseWheelAction;
+        Managers.Input.MouseWheelAction += MouseWheelAction;
+        cameraController.Init();
+        unitController.Init();
     }
 
     public override void Clear()

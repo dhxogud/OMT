@@ -4,27 +4,35 @@ using UnityEngine;
 
 public class UnitController
 {
-    public void OnUpdate()
-    {
 
+    // Member
+    public List<Unit> units = new List<Unit>();
+    int _index;
+    // 
+
+    // functions
+    public void Command(int option)
+    {
+        // if (unit.State == UnitState.Die)
+            // return;
     }
-
-    void MouseAction(Define.MouseEvent evt)
+    
+    public Unit GetNextUnit()
     {
-        if (evt == Define.MouseEvent.Click)
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
-
+            _index++;
+            if (_index > units.Count - 1)
+                _index = 0;
         }
+        return units[_index];
     }
-    void KeyAction()
-    {
 
-    }
     public void Init()
     {
-        Managers.Input.MouseButtonAction -= MouseAction;
-        Managers.Input.MouseButtonAction += MouseAction;
-        Managers.Input.KeyAction -= KeyAction;
-        Managers.Input.KeyAction += KeyAction;
+        foreach (Unit unit in GameObject.FindObjectsOfType<Unit>())
+            units.Add(unit);
+
+        _index = 0;
     }
 }
