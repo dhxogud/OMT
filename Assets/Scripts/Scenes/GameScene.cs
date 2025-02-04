@@ -34,7 +34,7 @@ public class GameScene : BaseScene
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, LayerMask.GetMask("Unit")))
         {
-            Debug.Log(hit.collider.gameObject.name);
+            
         }
     }
 
@@ -50,14 +50,15 @@ public class GameScene : BaseScene
         SceneType = Define.Scene.Game;
         // turnCnt = 0;
 
+        cameraController.Init();
+        unitController.Init();
+
         Managers.Input.KeyAction -= KeyAction;
         Managers.Input.KeyAction += KeyAction;
         Managers.Input.MouseButtonAction -= MouseButtonAction;
         Managers.Input.MouseButtonAction += MouseButtonAction;
         Managers.Input.MouseWheelAction -= MouseWheelAction;
         Managers.Input.MouseWheelAction += MouseWheelAction;
-        cameraController.Init();
-        unitController.Init();
     }
 
     public override void Clear()

@@ -9,7 +9,6 @@ public class CameraController
     Define.CameraMode _mode = Define.CameraMode.QuarterView;
     Transform transform;
     Vector3 _look = Vector3.zero; // 나중에 이 _look 위치가 내 유닛들의 Start position 위치를 넣으면 됨
-    Vector3 _offset = new Vector3(0.0f, 15.0f, -30.0f);
     bool isTracking;
     Vector3 _destPos;
 
@@ -64,22 +63,24 @@ public class CameraController
         delta = Quaternion.AngleAxis(0.5f, axis) * delta;
         transform.position = _look + delta;
         transform.LookAt(_look);
-
-        // // QE : Orbital Motion From Y-axis
-        // Vector3 delta = transform.position - transform.forward;
-        // Vector3 axis = Vector3.up * Input.GetKey(KeyCode.Q).ConvertToInt() + Vector3.down * Input.GetKey(KeyCode.E).ConvertToInt();
-        // delta = Quaternion.AngleAxis(0.5f, axis) * delta;
-        // transform.position = transform.forward + delta;
-        // transform.LookAt(transform.forward);
     }
     public void Zoom(int scrollDir)
     {
         if (isTracking) 
             return;
-
-        Vector3 origin = transform.position;
-        transform.position += new Vector3(0.0f, scrollDir, 0.0f) * 10.0f * Time.deltaTime;
-        _look = transform.position + (_look - origin);
+        Vector3 dir = _look - transform.position * scrollDir;
+        
+        if (dir.magnitude <= 45.0f)
+        {
+            transform.position -= dir.normalized;
+            _look -= dir.normalized;
+        }
+        else if (dir.magnitude >= 10.0f)
+        {
+            transform.position += dir.normalized;
+            _look += dir.normalized;
+        }
+        // transform.position = Vector3.Lerp(transform.position, _look, 0.1f);
     }
 
     public void Init()
@@ -88,11 +89,11 @@ public class CameraController
         isTracking = false;
     }
 
-    // public void SetQuaterView(Vector3 look)
-    // {
-    //     _mode = Define.CameraMode.QuarterView;
-    //     _look = look;
-    //     transform.LookAt(_look);
-    //     isTracking = false;
-    // }
+    public void SetQuaterView(Vector3 look)
+    {
+        _mode = Define.CameraMode.QuarterView;
+        _look = look;
+        transform.LookAt(_look);
+        isTracking = false;
+    }
 }
