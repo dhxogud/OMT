@@ -8,7 +8,7 @@ public class CameraController
 {
     Define.CameraMode _mode = Define.CameraMode.QuarterView;
     Transform transform;
-    Vector3 _look = Vector3.zero; // 나중에 이 _look 위치가 내 유닛들의 Start position 위치를 넣으면 됨
+    Vector3 _look = Vector3.zero; // !아 이거 백터 상태로 두지말고, 어떤 게임오브젝트 아래 트랜스 폼으로 값을 초기화 시키면 됨
     bool isTracking;
     Vector3 _destPos;
 
@@ -18,12 +18,11 @@ public class CameraController
         {
             if (isTracking)
             {
-                Vector3 origin = transform.position;
                 transform.position = Vector3.Slerp(transform.position, _destPos, 0.1f);
-                _look += transform.position - origin;
-                
                 if (Vector3.Distance(transform.position, _destPos) < 0.01f)
+                {
                     isTracking = false;
+                }
             }
         }
     }
@@ -49,6 +48,7 @@ public class CameraController
     {
         Vector3 targetPos = target.gameObject.transform.position;
         _destPos = targetPos + transform.position - _look;
+        _look = targetPos;
         isTracking = true;
     }
 
@@ -68,19 +68,11 @@ public class CameraController
     {
         if (isTracking) 
             return;
-        Vector3 dir = _look - transform.position * scrollDir;
-        
-        if (dir.magnitude <= 45.0f)
-        {
-            transform.position -= dir.normalized;
-            _look -= dir.normalized;
-        }
-        else if (dir.magnitude >= 10.0f)
-        {
-            transform.position += dir.normalized;
-            _look += dir.normalized;
-        }
-        // transform.position = Vector3.Lerp(transform.position, _look, 0.1f);
+
+        Vector3 dist = _look - transform.position;
+        if ((scrollDir > 0 && dist.magnitude < 10.0f) || (scrollDir < 0 && dist.magnitude > 50.0f))
+            return;
+        transform.position += dist.normalized * scrollDir;
     }
 
     public void Init()
