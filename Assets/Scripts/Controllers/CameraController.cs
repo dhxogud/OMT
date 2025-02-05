@@ -1,111 +1,91 @@
 using System;
-using TMPro;
-using Unity.VisualScripting;
+using System.Collections.Generic;
+using TreeEditor;
+using UnityEditor.SearchService;
 using UnityEngine;
-using UnityEngine.UIElements;
 
-public class CameraController : MonoBehaviour
+public class CameraController
 {
-    [SerializeField]
     Define.CameraMode _mode = Define.CameraMode.QuarterView;
-    Vector3 _look = Vector3.zero;
-    [SerializeField]
-    GameObject _target;
+    Transform transform;
+    Vector3 _look = Vector3.zero; // !아 이거 백터 상태로 두지말고, 어떤 게임오브젝트 아래 트랜스 폼으로 값을 초기화 시키면 됨
+    bool isTracking;
+    Vector3 _destPos;
 
-    const float _minYPos = 5.0f, _maxYPos = 30.0f;
-
-    void Start() 
-    {
-        Managers.Input.MouseAction -= MouseClickAction;
-        Managers.Input.MouseAction += MouseClickAction;
-    }
-    void MouseClickAction(Define.MouseEvent evt)
-    {
-        if (evt != Define.MouseEvent.Click)
-            return;
-
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit))
-        {
-            if (hit.collider.gameObject.tag == "Unit")
-            {
-                _target = hit.collider.gameObject;
-            }
-        }
-    }
-    void LateUpdate() 
+    public void OnLateUpdate()
     {
         if (_mode == Define.CameraMode.QuarterView)
         {
-            if (_target != null)
+            if (isTracking)
             {
-                ParallelMove();
-                OrbitalMove();
-                Zoom();
-            }
-            else
-            {
-                MoveToTarget();
+                transform.position = Vector3.Slerp(transform.position, _destPos, 0.1f);
+                if (Vector3.Distance(transform.position, _destPos) < 0.01f)
+                {
+                    isTracking = false;
+                }
             }
         }
     }
-    void MoveToTarget()
+
+    public void Move()
     {
-        Vector3 prev = transform.position;
-        Vector3 dest = _target.transform.position - _look;
-        transform.position = Vector3.Slerp(transform.position, dest, 0.1f);
-        _look += transform.position - prev;
+        if (isTracking) 
+            return;
 
-        Debug.DrawLine(transform.position, _look, Color.red, 10.0f);
-
-        if (Vector3.Distance(transform.position, dest) < 0.001f)
-        {
-            _target = null;
-        }
-    }
-    void ParallelMove()
-    {
-        Vector3 moveDir = Vector3.zero;
-        if (Input.GetKey(KeyCode.W))
-            moveDir += transform.forward;
-        if (Input.GetKey(KeyCode.S))
-            moveDir += transform.forward * -1;
-        if (Input.GetKey(KeyCode.D))
-            moveDir += transform.right;
-        if (Input.GetKey(KeyCode.A))
-            moveDir += transform.right * -1;
-
+        // WASD : Parallel Motion On XZ-plane
+        Vector3 moveDir = transform.forward * Input.GetKey(KeyCode.W).ConvertToInt()
+            + -transform.forward * Input.GetKey(KeyCode.S).ConvertToInt()
+            + transform.right * Input.GetKey(KeyCode.D).ConvertToInt()
+            + -transform.right * Input.GetKey(KeyCode.A).ConvertToInt();
+            
         moveDir.y = 0.0f;
         moveDir = moveDir.normalized * 30.0f * Time.deltaTime;
         transform.position += moveDir;
-        _look += moveDir; // 
+        _look += moveDir;
     }
-    
-    void OrbitalMove()
-    {
-        Vector3 delta = transform.position - _look;
-        if (Input.GetKey(KeyCode.Q))
-            delta = Quaternion.AngleAxis(1.0f, Vector3.up) * delta;
-        else if (Input.GetKey(KeyCode.E))
-            delta = Quaternion.AngleAxis(1.0f, Vector3.down) * delta;
 
+    public void Move(GameObject target)
+    {
+        Vector3 targetPos = target.gameObject.transform.position;
+        _destPos = targetPos + transform.position - _look;
+        _look = targetPos;
+        isTracking = true;
+    }
+
+    public void Rotate()
+    {
+        if (isTracking) 
+            return;
+
+        // QE : Orbital Motion From Y-axis
+        Vector3 delta = transform.position - _look;
+        Vector3 axis = Vector3.up * Input.GetKey(KeyCode.Q).ConvertToInt() + Vector3.down * Input.GetKey(KeyCode.E).ConvertToInt();
+        delta = Quaternion.AngleAxis(0.5f, axis) * delta;
         transform.position = _look + delta;
         transform.LookAt(_look);
     }
-    void Zoom()
+    public void Zoom(int scrollDir)
     {
-        float delta = Input.mouseScrollDelta.y;
-        if (delta > 0 && transform.position.y < _maxYPos)
-        {
-            Vector3 dir = new Vector3(0.0f, delta, 0.0f) * 30.0f * Time.deltaTime;
-            transform.position += dir;
-            _look += dir;
-        }
-        else if (delta < 0 && transform.position.y > _minYPos)
-        {
-            Vector3 dir = new Vector3(0.0f, delta, 0.0f) * 30.0f * Time.deltaTime;
-            transform.position += dir;
-            _look += dir;
-        }
+        if (isTracking) 
+            return;
+
+        Vector3 dist = _look - transform.position;
+        if ((scrollDir > 0 && dist.magnitude < 10.0f) || (scrollDir < 0 && dist.magnitude > 50.0f))
+            return;
+        transform.position += dist.normalized * scrollDir;
+    }
+
+    public void Init()
+    {
+        transform = Camera.main.transform;
+        isTracking = false;
+    }
+
+    public void SetQuaterView(Vector3 look)
+    {
+        _mode = Define.CameraMode.QuarterView;
+        _look = look;
+        transform.LookAt(_look);
+        isTracking = false;
     }
 }

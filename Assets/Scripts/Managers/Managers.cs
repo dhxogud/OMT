@@ -1,17 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditorInternal;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
 public class Managers : MonoBehaviour
 {
-    static Managers _instance ;
+    static Managers _instance;
     InputManager _input = new InputManager();
+    SceneManagerEx _scene = new SceneManagerEx();
 
-    
-    public static Managers Instance { get { Init(); return _instance; }}
+    static Managers Instance { get { Init(); return _instance; } }
     public static InputManager Input { get { return Instance._input; } }
+    public static SceneManagerEx Scene { get { return Instance._scene; } }
 
     void Start() 
     {
@@ -20,7 +21,7 @@ public class Managers : MonoBehaviour
 
     void Update() 
     {
-        Input.OnUpdate();
+        _input.OnUpdate();
     }
 
     static void Init()
@@ -29,12 +30,15 @@ public class Managers : MonoBehaviour
         {
             GameObject go = GameObject.Find("@Managers");
             if (go == null)
-            {
                 go = new GameObject { name = "@Managers" };
-                go.AddComponent<Managers>();
-            }
             DontDestroyOnLoad(go);
-            _instance = go.GetComponent<Managers>();
+            _instance = go.GetOrAddComponent<Managers>();
         }
+    }
+    
+    public static void Clear()
+    {
+        Input.Clear();
+        Scene.Clear();
     }
 }

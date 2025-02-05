@@ -1,38 +1,49 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UIElements;
 
 public class InputManager
 {
-    public Action KeyAction;
-    public Action<Define.MouseEvent> MouseAction = null;
+    public Action KeyAction = null;
+    public Action<Define.MouseEvent> MouseButtonAction = null;
+    public Action<int> MouseWheelAction = null;
     private bool _pressed;
-    public Vector3 _startDragPoint;
 
     public void OnUpdate()
     {
-        // if (EventSystem.current.IsPointerOverGameObject())
-        //     return;
-            
         if (Input.anyKey && KeyAction != null)
+        {
             KeyAction.Invoke();
-
-        if (MouseAction != null)
+        }
+        
+        if (MouseButtonAction != null)
         {
             if (Input.GetMouseButton(0))
             {
-                MouseAction.Invoke(Define.MouseEvent.Press);
+                MouseButtonAction.Invoke(Define.MouseEvent.Press);
                 _pressed = true;
             }
             else 
             {
                 if (_pressed)
                 {
-                    MouseAction.Invoke(Define.MouseEvent.Click);
+                    MouseButtonAction.Invoke(Define.MouseEvent.Click);
                     _pressed = false;
                 }
             }
         }
+        if (MouseWheelAction != null)
+        {
+            if (Input.mouseScrollDelta.y > 0)
+                MouseWheelAction.Invoke(1);
+            else if (Input.mouseScrollDelta.y < 0)
+                MouseWheelAction.Invoke(-1);
+        }
+    }
+    public void Clear()
+    {
+        KeyAction = null;
+        MouseButtonAction = null;
+        MouseWheelAction = null;
     }
 }
