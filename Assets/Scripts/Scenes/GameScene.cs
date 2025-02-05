@@ -23,8 +23,8 @@ public class GameScene : BaseScene
             cameraController.Move(unitController.GetNextUnit().gameObject);
         }
 
-        cameraController.Move();
-        cameraController.Rotate();
+        cameraController.Move(); // WASD
+        cameraController.Rotate(); // QE
 
     }
 
