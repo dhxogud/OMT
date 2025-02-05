@@ -8,7 +8,8 @@ public class CameraController
 {
     Define.CameraMode _mode = Define.CameraMode.QuarterView;
     Transform transform;
-    Vector3 _look = Vector3.zero; // !아 이거 백터 상태로 두지말고, 어떤 게임오브젝트 아래 트랜스 폼으로 값을 초기화 시키면 됨
+    Vector3 _offset = new Vector3(0.0f, 15.0f, -30.0f);
+    Vector3 _look;
     bool isTracking;
     Vector3 _destPos;
 
@@ -84,8 +85,8 @@ public class CameraController
     public void SetQuaterView(Vector3 look)
     {
         _mode = Define.CameraMode.QuarterView;
+        transform.position = _offset - look;
         _look = look;
         transform.LookAt(_look);
-        isTracking = false;
     }
 }

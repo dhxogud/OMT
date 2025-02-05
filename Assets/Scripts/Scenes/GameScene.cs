@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class GameScene : BaseScene
 {
-    // Map
-    CameraController cameraController = new CameraController();
     UnitController unitController = new UnitController();
+    // Map
+    Vector3 StartPos = Vector3.zero;
     // int turnCnt;
 
     void LateUpdate() 
@@ -50,8 +50,8 @@ public class GameScene : BaseScene
         SceneType = Define.Scene.Game;
         // turnCnt = 0;
 
-        cameraController.Init();
         unitController.Init();
+        cameraController.SetQuaterView(Vector3.zero);
 
         Managers.Input.KeyAction -= KeyAction;
         Managers.Input.KeyAction += KeyAction;

@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class UnitController
 {
-
     // Member
     public List<Unit> units = new List<Unit>();
     int _index;
