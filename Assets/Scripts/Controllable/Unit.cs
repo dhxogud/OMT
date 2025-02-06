@@ -6,7 +6,6 @@ using UnityEngine;
 public abstract class Unit : MonoBehaviour
 {
     public Define.Side _side { get; protected set;}
-    bool TurnOver;
     enum UnitState
     {
         Unknown,

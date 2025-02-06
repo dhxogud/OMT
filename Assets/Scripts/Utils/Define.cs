@@ -25,10 +25,9 @@ public class Define
     }
     public enum Side
     {
-        
         Friendly,
         Hostility,
-        neutrality
+        Neutrality
     }
     public enum CameraMode
     {

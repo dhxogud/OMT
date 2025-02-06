@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 public abstract class BaseScene : MonoBehaviour
 {
     public Define.Scene SceneType { get; protected set; } = Define.Scene.Unknown;
-    protected CameraController cameraController = new CameraController();
+    protected CameraController MainCamera = new CameraController();
     void Awake() 
     {
         Init();
@@ -20,7 +20,7 @@ public abstract class BaseScene : MonoBehaviour
         // {
         //     Managers.Resource.Instantiate("UI/EventSystem").name = "@EventSystem";
         // }
-        cameraController.Init();
+        MainCamera.Init();
     }
     public abstract void Clear();
 }

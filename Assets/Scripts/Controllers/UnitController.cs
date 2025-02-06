@@ -5,8 +5,9 @@ using UnityEngine;
 public class UnitController
 {
     // Member
-    public List<Unit> units = new List<Unit>();
+    List<Unit> units = new List<Unit>();
     int _index;
+    public Unit CurrentUnit { get { return units[_index]; } } 
     // 
 
     // functions
@@ -18,12 +19,9 @@ public class UnitController
     
     public Unit GetNextUnit()
     {
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            _index++;
-            if (_index > units.Count - 1)
-                _index = 0;
-        }
+        _index++;
+        if (_index > units.Count - 1)
+            _index = 0;
         return units[_index];
     }
 

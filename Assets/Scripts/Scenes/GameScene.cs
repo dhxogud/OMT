@@ -6,13 +6,19 @@ using UnityEngine;
 public class GameScene : BaseScene
 {
     UnitController unitController = new UnitController();
+
     // Map
     Vector3 StartPos = Vector3.zero;
+    // Turn
     // int turnCnt;
 
+    void Update() 
+    {
+        
+    }
     void LateUpdate() 
     {
-        cameraController.OnLateUpdate();
+        MainCamera.OnLateUpdate();
     }
 
 
@@ -20,12 +26,15 @@ public class GameScene : BaseScene
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            cameraController.Move(unitController.GetNextUnit().gameObject);
+            MainCamera.Move(unitController.GetNextUnit().gameObject);
         }
 
-        cameraController.Move(); // WASD
-        cameraController.Rotate(); // QE
+        MainCamera.Move(); // WASD
+        MainCamera.Rotate(); // QE
 
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+        }
     }
 
     void MouseButtonAction(Define.MouseEvent evt)
@@ -40,7 +49,7 @@ public class GameScene : BaseScene
 
     void MouseWheelAction(int delta)
     {
-        cameraController.Zoom(delta);
+        MainCamera.Zoom(delta);
     }
 
     protected override void Init()
@@ -51,7 +60,7 @@ public class GameScene : BaseScene
         // turnCnt = 0;
 
         unitController.Init();
-        cameraController.SetQuaterView(Vector3.zero);
+        MainCamera.SetQuaterView(Vector3.zero);
 
         Managers.Input.KeyAction -= KeyAction;
         Managers.Input.KeyAction += KeyAction;
