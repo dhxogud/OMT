@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
@@ -35,9 +36,12 @@ public class Managers : MonoBehaviour
             GameObject go = GameObject.Find("@Managers");
             if (go == null)
                 go = new GameObject { name = "@Managers" };
-            DontDestroyOnLoad(go);
             _instance = go.GetOrAddComponent<Managers>();
+            DontDestroyOnLoad(go);
+            
+            _instance._data.Init();
         }
+
     }
     
     public static void Clear()

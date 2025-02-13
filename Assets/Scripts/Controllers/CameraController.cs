@@ -4,16 +4,15 @@ using TreeEditor;
 using UnityEditor.SearchService;
 using UnityEngine;
 
-public class CameraController
+public class CameraController : MonoBehaviour
 {
     Define.CameraMode _mode = Define.CameraMode.QuarterView;
-    Transform transform;
     Vector3 _offset = new Vector3(0.0f, 15.0f, -30.0f);
     Vector3 _look;
     bool isTracking;
     Vector3 _destPos;
 
-    public void OnLateUpdate()
+    public void LateUpdate()
     {
         if (_mode == Define.CameraMode.QuarterView)
         {
@@ -27,8 +26,7 @@ public class CameraController
             }
         }
     }
-
-    public void Move()
+    void Move()
     {
         if (isTracking) 
             return;
@@ -43,6 +41,13 @@ public class CameraController
         moveDir = moveDir.normalized * 30.0f * Time.deltaTime;
         transform.position += moveDir;
         _look += moveDir;
+
+        // QE : Orbital Motion From Y-axis
+        Vector3 delta = transform.position - _look;
+        Vector3 axis = Vector3.up * Input.GetKey(KeyCode.Q).ConvertToInt() + Vector3.down * Input.GetKey(KeyCode.E).ConvertToInt();
+        delta = Quaternion.AngleAxis(0.5f, axis) * delta;
+        transform.position = _look + delta;
+        transform.LookAt(_look);
     }
 
     public void Move(GameObject target)
@@ -53,18 +58,6 @@ public class CameraController
         isTracking = true;
     }
 
-    public void Rotate()
-    {
-        if (isTracking) 
-            return;
-
-        // QE : Orbital Motion From Y-axis
-        Vector3 delta = transform.position - _look;
-        Vector3 axis = Vector3.up * Input.GetKey(KeyCode.Q).ConvertToInt() + Vector3.down * Input.GetKey(KeyCode.E).ConvertToInt();
-        delta = Quaternion.AngleAxis(0.5f, axis) * delta;
-        transform.position = _look + delta;
-        transform.LookAt(_look);
-    }
     public void Zoom(int scrollDir)
     {
         if (isTracking) 
@@ -75,18 +68,18 @@ public class CameraController
             return;
         transform.position += dist.normalized * scrollDir;
     }
-
-    public void Init()
+    
+    void Start() 
     {
-        transform = Camera.main.transform;
-        isTracking = false;
+        Init();
     }
-
-    public void SetQuaterView(Vector3 look)
+    void Init()
     {
-        _mode = Define.CameraMode.QuarterView;
-        transform.position = _offset - look;
-        _look = look;
-        transform.LookAt(_look);
+        isTracking = false;
+
+        Managers.Input.KeyAction -= Move;
+        Managers.Input.KeyAction += Move;
+        Managers.Input.MouseWheelAction -= Zoom;
+        Managers.Input.MouseWheelAction += Zoom;
     }
 }

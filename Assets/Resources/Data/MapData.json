@@ -1,8 +1,26 @@
 {
-    "stage" :
+    "maps" :
     [
-        { "level" : 1 },
-        { "scale" : [10, 10]},
-        { "startPos" : [0,  0]}
+        [
+            { "stage" : 1 },
+            { "width" : 100},
+            { "depth" : 100},
+            { "height" : 50},
+            { "startPos" : [0,  0]}
+        ],
+        [
+            { "stage" : 2 },
+            { "width" : 100},
+            { "depth" : 100},
+            { "height" : 50},
+            { "startPos" : [0,  0]}
+        ],
+        [
+            { "stage" : 3 },
+            { "width" : 100},
+            { "depth" : 100},
+            { "height" : 50},
+            { "startPos" : [0,  0]}
+        ]
     ]
 }

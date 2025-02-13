@@ -1,35 +1,60 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnitController
+public class UnitController : MonoBehaviour
 {
-    // Member
-    List<Unit> units = new List<Unit>();
-    int _index;
-    public Unit CurrentUnit { get { return units[_index]; } } 
-    // 
-
-    // functions
-    public void Command(int option)
-    {
-        // if (unit.State == UnitState.Die)
-            // return;
+    public Dictionary<string, Unit> unitDict;
+    protected Define.UnitSide unitSide;
+    Define.ControlEntity entity;
+    UnitState unitState;
+    protected enum UnitState {
+        Idle,
+        Action,
+        Die
     }
+    GameObject _target;
     
-    public Unit GetNextUnit()
+
+    void Start() 
     {
-        _index++;
-        if (_index > units.Count - 1)
-            _index = 0;
-        return units[_index];
+        Init();
     }
+    // functions
 
-    public void Init()
+    void KeyAction()
     {
-        foreach (Unit unit in GameObject.FindObjectsOfType<Unit>())
-            units.Add(unit);
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            // Move();
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            // Attack();
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            
+        }
+    }
+    void MouseButtonAction(Define.MouseEvent evt)
+    {
 
-        _index = 0;
+    }
+    void Init()
+    {
+        unitState = UnitState.Idle;
+        unitDict = Managers.Data.UnitDict;
+
+        Managers.Input.KeyAction -= KeyAction;
+        Managers.Input.KeyAction += KeyAction;
+        Managers.Input.MouseButtonAction -= MouseButtonAction;
+        Managers.Input.MouseButtonAction += MouseButtonAction;
+        
     }
 }

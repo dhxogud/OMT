@@ -3,41 +3,75 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-#region Stat
+#region Unit
+[Serializable]
+public class Unit
+{
+    public string name;
+    public string specie;
+    public List<Stat> stats;
+}
 [Serializable]
 public class Stat
 {
     public int level;
-    public int hp;
-    public int speed;
-    public int attack;
+    public int HP;
+    public int STR;
+    public int AGL;
+    public int DEX;
+    public int INT;
 }
-
-[Serializable]
-public class StatData : ILoader<int, Stat>
+public class UnitData : ILoader<string, Unit>
 {
-    public List<Stat> stats = new List<Stat>();
-    public Dictionary<int, Stat> MakeDict()
+    public List<Unit> units = new List<Unit>();
+    public Dictionary<string, Unit> MakeDict()
     {
-        Dictionary<int, Stat> dict = new Dictionary<int, Stat>();
+        Dictionary<string, Unit> unitDict = new Dictionary<string, Unit>();
 
-        foreach (Stat stat in stats)
-            dict.Add(stat.level, stat);
-        return dict;
+        foreach (Unit unit in units)
+            unitDict.Add(unit.name, unit);
+
+        Debug.Log(units.Count);
+            
+        return unitDict;
     }
 }
 
+
 #endregion
 
+#region Behaviour
+public class Behaviour
+{
+    public string name;
+    public void Move(Vector3 dest)
+    {
 
+    }
+    public void Attack(int range, int damage)
+    {
+
+    }
+    public void Guard()
+    {
+
+    }
+    public void Dodge()
+    {
+
+    }
+    public void ClassSkill()
+    {
+
+    }
+}
+#endregion
 
 #region Map
-[Serializable]
 public class Map
 {
 
 }
-[Serializable]
 public class MapData
 {
     
