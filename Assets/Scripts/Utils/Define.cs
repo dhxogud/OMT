@@ -23,17 +23,30 @@ public class Define
         Game,
         Lobby
     }
-    public enum Side
+    public enum UnitSide
     {
-        
-        Friendly,
-        Hostility,
-        neutrality
+        Friend,
+        Host,
+        Neutral,
+    }
+    public enum ControlEntity
+    {
+        Player,
+        AI
     }
     public enum CameraMode
     {
         QuarterView,
         ShoulderView
     }
-
+    public enum UnitName
+    {
+        Warrior,
+        Archor,
+        Caster,
+        Beast,
+        Dog,
+        Goblin,
+        Tauren
+    }
 }

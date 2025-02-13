@@ -5,42 +5,23 @@ using UnityEngine;
 
 public class GameScene : BaseScene
 {
+    // Units
+    List<UnitController> units = new List<UnitController>();
+    public UnitController CurrentUnit { get { return units[_index]; }}
+    int _index;
+
     // Map
-    CameraController cameraController = new CameraController();
-    UnitController unitController = new UnitController();
-    // int turnCnt;
-
-    void LateUpdate() 
-    {
-        cameraController.OnLateUpdate();
-    }
-
+    Vector3 StartPos = Vector3.zero;
+    int turnCnt;
 
     void KeyAction()
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            cameraController.Move(unitController.GetNextUnit().gameObject);
+            _index++;
+            if (_index > units.Count)
+                _index = 0;
         }
-
-        cameraController.Move();
-        cameraController.Rotate();
-
-    }
-
-    void MouseButtonAction(Define.MouseEvent evt)
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, LayerMask.GetMask("Unit")))
-        {
-            
-        }
-    }
-
-    void MouseWheelAction(int delta)
-    {
-        cameraController.Zoom(delta);
     }
 
     protected override void Init()
@@ -48,17 +29,14 @@ public class GameScene : BaseScene
         base.Init();
         
         SceneType = Define.Scene.Game;
-        // turnCnt = 0;
 
-        cameraController.Init();
-        unitController.Init();
+
+        foreach (UnitController unit in GameObject.FindObjectsOfType<UnitController>())
+            units.Add(unit);
+        _index = 0;
 
         Managers.Input.KeyAction -= KeyAction;
         Managers.Input.KeyAction += KeyAction;
-        Managers.Input.MouseButtonAction -= MouseButtonAction;
-        Managers.Input.MouseButtonAction += MouseButtonAction;
-        Managers.Input.MouseWheelAction -= MouseWheelAction;
-        Managers.Input.MouseWheelAction += MouseWheelAction;
     }
 
     public override void Clear()
