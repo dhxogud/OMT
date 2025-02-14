@@ -43,10 +43,7 @@ public class Define
     {
         Warrior,
         Archor,
-        Caster,
-        Beast,
-        Dog,
-        Goblin,
-        Tauren
+        Tauren,
+        HellHound
     }
 }
