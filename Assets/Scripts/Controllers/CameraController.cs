@@ -1,72 +1,71 @@
 using System;
 using System.Collections.Generic;
-using TreeEditor;
-using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class CameraController : MonoBehaviour
 {
     Define.CameraMode _mode = Define.CameraMode.QuarterView;
-    Vector3 _offset = new Vector3(0.0f, 15.0f, -30.0f);
-    Vector3 _look;
-    bool isTracking;
-    Vector3 _destPos;
+    Vector3 _delta = new Vector3(0.0f, 15.0f, -30.0f);
+    const float minDistanceDelta = 10.0f, maxDistanceDelta = 40.0f;
+
+    [SerializeField]
+    GameObject _target = null;
+    public void SetTarget(GameObject target) { _target = target; }
 
     public void LateUpdate()
     {
         if (_mode == Define.CameraMode.QuarterView)
         {
-            if (isTracking)
+            Debug.DrawLine(_delta, Vector3.zero, Color.red);
+            if (_target.IsValid() == false)
+                return;
+
+            Vector3 dest = _target.transform.position + _delta;
+            transform.position = Vector3.Slerp(transform.position, dest, 0.01f);
+        }
+    }
+    void OnKeyAction()
+    {
+        if (_mode == Define.CameraMode.QuarterView)
+        {
+            if (Input.GetKeyDown(KeyCode.Tab))
+                _target = Managers.Game.GetNextPlayer();
+
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
             {
-                transform.position = Vector3.Slerp(transform.position, _destPos, 0.1f);
-                if (Vector3.Distance(transform.position, _destPos) < 0.01f)
-                {
-                    isTracking = false;
-                }
+                _target = null;
+
+                Vector3 moveDir = transform.forward * Input.GetKey(KeyCode.W).ConvertToInt()
+                    + -transform.forward * Input.GetKey(KeyCode.S).ConvertToInt()
+                    + transform.right * Input.GetKey(KeyCode.D).ConvertToInt()
+                    + -transform.right * Input.GetKey(KeyCode.A).ConvertToInt();
+
+                moveDir.y = 0.0f;
+                moveDir = moveDir.normalized * 30.0f * Time.deltaTime;
+                transform.position += moveDir;
+            }
+            if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.E))
+            {
+                Vector3 pivot = transform.position - _delta;
+                Vector3 axis = Vector3.up * Input.GetKey(KeyCode.Q).ConvertToInt() + Vector3.down * Input.GetKey(KeyCode.E).ConvertToInt();
+                _delta = Quaternion.AngleAxis(0.5f, axis) * _delta;
+                transform.position = _delta + pivot;
+                transform.LookAt(pivot);
             }
         }
     }
-    void Move()
+
+    public void OnMouseWheelAction(int scrollDir)
     {
-        if (isTracking) 
-            return;
-
-        // WASD : Parallel Motion On XZ-plane
-        Vector3 moveDir = transform.forward * Input.GetKey(KeyCode.W).ConvertToInt()
-            + -transform.forward * Input.GetKey(KeyCode.S).ConvertToInt()
-            + transform.right * Input.GetKey(KeyCode.D).ConvertToInt()
-            + -transform.right * Input.GetKey(KeyCode.A).ConvertToInt();
-            
-        moveDir.y = 0.0f;
-        moveDir = moveDir.normalized * 30.0f * Time.deltaTime;
-        transform.position += moveDir;
-        _look += moveDir;
-
-        // QE : Orbital Motion From Y-axis
-        Vector3 delta = transform.position - _look;
-        Vector3 axis = Vector3.up * Input.GetKey(KeyCode.Q).ConvertToInt() + Vector3.down * Input.GetKey(KeyCode.E).ConvertToInt();
-        delta = Quaternion.AngleAxis(0.5f, axis) * delta;
-        transform.position = _look + delta;
-        transform.LookAt(_look);
-    }
-
-    public void Move(GameObject target)
-    {
-        Vector3 targetPos = target.gameObject.transform.position;
-        _destPos = targetPos + transform.position - _look;
-        _look = targetPos;
-        isTracking = true;
-    }
-
-    public void Zoom(int scrollDir)
-    {
-        if (isTracking) 
-            return;
-
-        Vector3 dist = _look - transform.position;
-        if ((scrollDir > 0 && dist.magnitude < 10.0f) || (scrollDir < 0 && dist.magnitude > 50.0f))
-            return;
-        transform.position += dist.normalized * scrollDir;
+        if (_mode == Define.CameraMode.QuarterView)
+        {
+            if ((scrollDir > 0 && _delta.magnitude <= minDistanceDelta) || (scrollDir < 0 && _delta.magnitude >= maxDistanceDelta))
+                return;
+            Vector3 dir = _delta.normalized * scrollDir * -1;
+            transform.position += dir;
+            _delta += dir;
+        }
     }
     
     void Start() 
@@ -75,11 +74,19 @@ public class CameraController : MonoBehaviour
     }
     void Init()
     {
-        isTracking = false;
+        Managers.Input.KeyAction -= OnKeyAction;
+        Managers.Input.KeyAction += OnKeyAction;
+        Managers.Input.MouseWheelAction -= OnMouseWheelAction;
+        Managers.Input.MouseWheelAction += OnMouseWheelAction;
 
-        Managers.Input.KeyAction -= Move;
-        Managers.Input.KeyAction += Move;
-        Managers.Input.MouseWheelAction -= Zoom;
-        Managers.Input.MouseWheelAction += Zoom;
+        _delta = _delta.normalized * maxDistanceDelta;
+        transform.position = _delta;
+        transform.LookAt(transform.position - _delta);
+    }
+
+    public void SetQuaterView(Vector3 delta)
+    {
+        _mode = Define.CameraMode.QuarterView;
+        _delta = delta.normalized * maxDistanceDelta;
     }
 }

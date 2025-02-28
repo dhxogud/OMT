@@ -5,29 +5,26 @@
             "unitId" : "0",
             "name" : "Warrior",
             "model" : "humanoid",
-            "level" : "1",
-            "stat": { "HP" : "100", "STR" : "10", "AGL" : "3", "DEX" : "3", "INT" : "1"}
+            "stats": { "Level": "1", "HP" : "100", "STR" : "10", "AGL" : "3", "DEX" : "3", "INT" : "1"}
         },
         { 
             "unitId" : "1",  
             "name" : "Archor",
             "model" : "humanoid",
             "level" : "1",
-            "stat": { "HP" : "100", "STR" : "10", "AGL" : "3", "DEX" : "3", "INT" : "1"}
+            "stats": { "Level": "1", "HP" : "100", "STR" : "10", "AGL" : "3", "DEX" : "3", "INT" : "1"}
         },
         {
             "unitId" : "2",
             "name" : "Tauren",
             "model" : "humanoid",
-            "level" : "1",
-            "stat": { "HP" : "100", "STR" : "10", "AGL" : "3", "DEX" : "3", "INT" : "1"}
+            "stats": { "Level": "1", "HP" : "100", "STR" : "10", "AGL" : "3", "DEX" : "3", "INT" : "1"}
         },
         {
             "unitId" : "3",
             "name" : "HellHound",
             "model" : "beast",
-            "level" : "1",
-            "stat": { "HP" : "100", "STR" : "10", "AGL" : "3", "DEX" : "3", "INT" : "1"}
+            "stats": { "Level": "1", "HP" : "100", "STR" : "10", "AGL" : "3", "DEX" : "3", "INT" : "1"}
         }
     ]
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using UnityEngine;
 
 #region Unit
@@ -10,12 +11,12 @@ public class Unit
     public int unitId;
     public string name;
     public string model;
-    public int level;
-    public Stat stat;
+    public List<Stat> stats;
 }
 [Serializable]
 public class Stat
 {
+    public int Level;
     public int HP;
     public int STR;
     public int AGL;
@@ -35,35 +36,6 @@ public class UnitData : ILoader<int, Unit>
         }
             
         return unitDict;
-    }
-}
-
-
-#endregion
-
-#region Behaviour
-public class Behaviour
-{
-    public string name;
-    public void Move(Vector3 dest)
-    {
-
-    }
-    public void Attack(int range, int damage)
-    {
-
-    }
-    public void Guard()
-    {
-
-    }
-    public void Dodge()
-    {
-
-    }
-    public void ClassSkill()
-    {
-
     }
 }
 #endregion
