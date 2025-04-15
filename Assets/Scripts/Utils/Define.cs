@@ -6,10 +6,12 @@ public class Define
 {
     public enum MouseEvent
     {
-        Click,
-        Press,
-        Drag,
-        MiddleClick,
+        LeftButtonClick,
+        LeftButtonPress,
+        LeftButtonCDrag,
+        RightButtonClick,
+        RightButtonPress,
+        RightButtonDrag,
     }
     public enum UIEvent
     {
@@ -28,6 +30,28 @@ public class Define
         QuarterView,
         ShoulderView
     }
+    public enum Layer
+    {
+        Unit = 8,
+        Field = 9,
+        Block = 10,
+    }
+    public enum GameState
+    {
+        None,
+        Ready,
+        PlayerTurn,
+        EnemyTurn,
+        Won,
+        Lose
+    }
+    public enum UnitState
+    {
+        None,
+        Idle,
+        Skill,
+        Die
+    }
     public enum WorldObject
     {
         None,
@@ -36,9 +60,8 @@ public class Define
     }
     public enum UnitName
     {
-        Warrior,
-        Archor,
-        Tauren,
-        HellHound
+        John,
+        HellHound,
+        Moo
     }
 }

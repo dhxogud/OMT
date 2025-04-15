@@ -272,7 +272,7 @@ GameObject:
   - component: {fileID: 855623039}
   - component: {fileID: 855623038}
   - component: {fileID: 855623037}
-  m_Layer: 10
+  m_Layer: 9
   m_Name: Field
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -359,8 +359,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 855623036}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.05, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 100, y: 1, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -378,7 +378,7 @@ GameObject:
   - component: {fileID: 1448238578}
   - component: {fileID: 1448238577}
   - component: {fileID: 1448238576}
-  m_Layer: 7
+  m_Layer: 10
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -534,6 +534,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 8783526002543287920}
   - {fileID: 705507995}
-  - {fileID: 855623040}
   - {fileID: 730122573}
   - {fileID: 1448238579}
+  - {fileID: 855623040}

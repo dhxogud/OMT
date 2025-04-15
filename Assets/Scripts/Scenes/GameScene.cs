@@ -1,36 +1,67 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Playables;
 
 public class GameScene : BaseScene
 {
+    CameraController cameraController;
+    UnitController unitController; 
+    SpawnController spawnController;
+
+    public Action<GameObject> SwitchTargetAction = null;
+
     protected override void Init()
     {
         base.Init();
         
         SceneType = Define.Scene.Game;
-        gameObject.GetOrAddComponent<CursorController>();
-        Camera.main.gameObject.GetOrAddComponent<CameraController>();
-        // 
-        GameObject Spawn = new GameObject { name = "@Spawn" };
-        GameObject Spawn1 = new GameObject { name = "@Spawn1" };
-        GameObject Spawn2 = new GameObject { name = "@Spawn2" };
-        Spawn.transform.position = new Vector3(10.0f, 10.0f, 10.0f);
-        Spawn1.transform.position = Vector3.zero;
-        Spawn2.transform.position = new Vector3(-10.0f, 0.0f, -10.0f);
-        // 
-        Managers.Game.Spawn(Define.WorldObject.Player, "Unit/Cube", Spawn.transform);
-        Managers.Game.Spawn(Define.WorldObject.Player, "Unit/Cube", Spawn1.transform);
-        Managers.Game.Spawn(Define.WorldObject.Player, "Unit/Cube", Spawn2.transform);
 
+        Managers.Game.GameStateAction -= OnGameStateAction;
+        Managers.Game.GameStateAction += OnGameStateAction;
+
+
+        gameObject.GetOrAddComponent<CursorController>();
+        cameraController = Camera.main.gameObject.GetOrAddComponent<CameraController>();
+        unitController = gameObject.GetOrAddComponent<UnitController>();
+        spawnController = gameObject.GetOrAddComponent<SpawnController>();
+
+        Managers.Game.OnChangeGameState(Define.GameState.Ready);
     }
 
     public override void Clear()
     {
         Debug.Log("Clear GameScene!");
+    }
+
+    public void OnGameStateAction(Define.GameState gameState)
+    {
+        switch (gameState)
+        {
+            case Define.GameState.Ready:
+                spawnController.Init();
+                cameraController.Init();
+                break;
+            case Define.GameState.PlayerTurn:
+                spawnController.Clear();
+                unitController.Init();
+                cameraController.Init();
+                break;
+            case Define.GameState.EnemyTurn:
+                unitController.Clear();
+                cameraController.Clear();
+                break;
+            case Define.GameState.Won:
+                unitController.Clear();
+                cameraController.Clear();
+                spawnController.Clear();
+                break;
+            case Define.GameState.Lose:
+                unitController.Clear();
+                cameraController.Clear();
+                spawnController.Clear();
+                break;
+        }
     }
 }
