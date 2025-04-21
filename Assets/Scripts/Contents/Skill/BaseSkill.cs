@@ -10,9 +10,9 @@ using UnityEngine;
 
 
 [Serializable]
-public abstract class BaseSkill
+public abstract class BaseSkill : BaseUnit
 {
-    public string name;
+    protected string name;
     public int needActivePoint;
     public Define.WorldObject targetType;
 
@@ -29,7 +29,7 @@ public class Move : BaseSkill
     Transform _destPos;
     public override bool OnSkill()
     {
-
+        name = "move";
         return false;
     }
 }

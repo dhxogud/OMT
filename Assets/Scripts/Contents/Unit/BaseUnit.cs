@@ -85,11 +85,18 @@ public abstract class BaseUnit : MonoBehaviour
     }
     public virtual void OnSkill(GameObject target)
     {
-        // if (currentSkill.IsValidTarget(target))
-        // {
-        //     State = Define.UnitState.Skill;
-        // }
+        currentSkill.OnSkill();
+
     }
+    public virtual void OnAttack(BaseUnit attacker)
+    {
+
+    }
+    public virtual void OnDead(BaseUnit attacker)
+    {
+
+    }
+    
     public virtual void SetOrAddTarget(GameObject _target) {}
     protected virtual void UpdateIdle() 
     { 
@@ -100,5 +107,8 @@ public abstract class BaseUnit : MonoBehaviour
         // if (!currentSkill.OnSkill())
         //     State = Define.UnitState.Idle;
     }
-    protected virtual void UpdateDie() { }
+    protected virtual void UpdateDie() 
+    { 
+
+    }
 }
