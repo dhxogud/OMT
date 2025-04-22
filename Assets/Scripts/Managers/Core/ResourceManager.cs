@@ -30,13 +30,8 @@ public class ResourceManager
             return null;
         }
 
-        // if (parent != null)
-        // {
-
-        // }
-        GameObject go = UnityEngine.Object.Instantiate<GameObject>(original);
+        GameObject go = UnityEngine.Object.Instantiate<GameObject>(original, parent);
         go.name = original.name;
-
         return go;
     }
     public void Destroy(GameObject go) 

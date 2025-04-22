@@ -8,6 +8,12 @@ using UnityEngine.PlayerLoop;
 public class Managers : MonoBehaviour
 {
     static Managers _instance;
+    #region Contents
+    GameManagerEx _game = new GameManagerEx();
+    public static GameManagerEx Game { get { return Instance._game; } }
+    #endregion
+
+    #region Core
     DataManager _data = new DataManager();
     InputManager _input = new InputManager();
     ResourceManager _resource = new ResourceManager();
@@ -18,6 +24,7 @@ public class Managers : MonoBehaviour
     public static InputManager Input { get { return Instance._input; } }
     public static ResourceManager Resource { get { return Instance._resource; } }
     public static SceneManagerEx Scene { get { return Instance._scene; } }
+    #endregion
 
     void Start() 
     {
@@ -27,6 +34,7 @@ public class Managers : MonoBehaviour
     void Update() 
     {
         _input.OnUpdate();
+        _game.OnUpdate();
     }
 
     static void Init()
@@ -40,8 +48,8 @@ public class Managers : MonoBehaviour
             DontDestroyOnLoad(go);
             
             _instance._data.Init();
+            _instance._game.Init();
         }
-
     }
     
     public static void Clear()

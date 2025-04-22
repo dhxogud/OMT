@@ -7,7 +7,8 @@ public class InputManager
     public Action KeyAction = null;
     public Action<Define.MouseEvent> MouseButtonAction = null;
     public Action<int> MouseWheelAction = null;
-    private bool _pressed;
+    private bool _leftPressed;
+    private bool _rightPressed;
 
     public void OnUpdate()
     {
@@ -20,18 +21,33 @@ public class InputManager
         {
             if (Input.GetMouseButton(0))
             {
-                MouseButtonAction.Invoke(Define.MouseEvent.Press);
-                _pressed = true;
+                MouseButtonAction.Invoke(Define.MouseEvent.LeftButtonPress);
+                _leftPressed = true;
             }
             else 
             {
-                if (_pressed)
+                if (_leftPressed)
                 {
-                    MouseButtonAction.Invoke(Define.MouseEvent.Click);
-                    _pressed = false;
+                    MouseButtonAction.Invoke(Define.MouseEvent.LeftButtonClick);
+                    _leftPressed = false;
+                }
+            }
+
+            if (Input.GetMouseButton(1))
+            {
+                MouseButtonAction.Invoke(Define.MouseEvent.RightButtonPress);
+                _rightPressed = true;
+            }
+            else 
+            {
+                if (_rightPressed)
+                {
+                    MouseButtonAction.Invoke(Define.MouseEvent.RightButtonClick);
+                    _rightPressed = false;
                 }
             }
         }
+
         if (MouseWheelAction != null)
         {
             if (Input.mouseScrollDelta.y > 0)
@@ -39,6 +55,7 @@ public class InputManager
             else if (Input.mouseScrollDelta.y < 0)
                 MouseWheelAction.Invoke(-1);
         }
+
     }
     public void Clear()
     {

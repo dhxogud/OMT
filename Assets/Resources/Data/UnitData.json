@@ -1,34 +1,91 @@
 {
-    "units" : [
-        {   
-            "name" : "warrior",
-            "specie" : "human",
-            "stats": [
+    "units" :
+    [
+        { 
+            "name"  : "John",
+            "specie": "Human",
+            "startLevel" : "1",
+            "stats" : 
+            {
+                "1" : 
                 {
-                    "level" : "1",
-                    "HP" : "100",
-                    "STR" : "10",
-                    "AGL" : "3",
-                    "DEX" : "3",
-                    "INT" : "1"
+                    "hp" : "100",
+                    "actionPoint" : "2",
+                    "moveSpeed" : "10",
+                    "attack" : "20",
+                    "sight" : "20"
                 },
+                "2" : 
                 {
-                    "level" : "2",
-                    "HP" : "100",
-                    "STR" : "10",
-                    "AGL" : "3",
-                    "DEX" : "3",
-                    "INT" : "1"
+                    "hp" : "100",
+                    "actionPoint" : "2",
+                    "moveSpeed" : "10",
+                    "attack" : "20",
+                    "sight" : "20"
                 },
+                "3" : 
                 {
-                    "level" : "3",
-                    "HP" : "100",
-                    "STR" : "10",
-                    "AGL" : "3",
-                    "DEX" : "3",
-                    "INT" : "1"
+                    "hp" : "100",
+                    "actionPoint" : "2",
+                    "moveSpeed" : "10",
+                    "attack" : "20",
+                    "sight" : "20"
                 }
-            ]
+            },
+            "skills" :
+            {
+                "1" : [
+                    "move", "attack", "hide", "heal"
+                ],
+                "2" : [
+                    "move", "attack", "hide", "heal"
+                ],
+                "3" : [
+                    "move", "attack", "hide", "heal"
+                ]
+            }
+        },
+        { 
+            "name"  : "HellHound",
+            "specie": "Beast",
+            "startLevel" : "5",
+            "stats" : 
+            {
+                "5" : {
+                    "hp" : "50",
+                    "actionPoint" : "2",
+                    "moveSpeed" : "10",
+                    "attack" : "20",
+                    "sight" : "20" 
+                }
+            },
+            "skills" :
+            {
+                "5" : [
+                    "move", "attack"
+                ]
+            }
+        },
+        { 
+            "name"  : "Moo",
+            "specie": "Tauren",
+            "startLevel" : "10",
+            "stats" : 
+            {
+                "10" : {
+                    "hp" : "10000",
+                    "actionPoint" : "5",
+                    "moveSpeed" : "10",
+                    "attack" : "20",
+                    "sight" : "20"
+                }
+            },
+            "skills" :
+            {
+                "10" : [
+                    "move", "attack"
+                ]
+            }
         }
     ]
 }
