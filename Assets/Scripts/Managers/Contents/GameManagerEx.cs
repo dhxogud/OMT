@@ -7,7 +7,9 @@ using UnityEngine;
 public class GameManagerEx
 {
     public Action<Define.GameState> GameStateAction = null;
+
     Define.GameState State = Define.GameState.None;
+
     public void OnChangeGameState(Define.GameState newState)
     {
         if (State != newState)

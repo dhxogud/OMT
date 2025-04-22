@@ -14,6 +14,7 @@ public class SpawnController : MonoBehaviour
     }
     
     int _mask = 1 << (int) Define.Layer.Field;
+
     public void OnKeyAction() 
     {
         if (Input.GetKey(KeyCode.Alpha1))
@@ -43,6 +44,7 @@ public class SpawnController : MonoBehaviour
 
     public void OnMouseButtonAction(Define.MouseEvent evt) 
     {
+        Debug.Log("tqlkfqj");
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, _mask) == false) return; // 나도 알고 있다 이거 개구린 코드라는거
