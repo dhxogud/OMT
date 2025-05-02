@@ -8,40 +8,88 @@ using UnityEditor;
 using UnityEditor.UI;
 using UnityEngine;
 
-
-[Serializable]
-public abstract class BaseSkill : BaseUnit
+namespace Skill
 {
-    protected string name;
-    public int needActivePoint;
-    public Define.WorldObject targetType;
-
-    // 스킬을 발동시킬때 필요한 자원들
-    // 스킬을 시전하는 Unit의 transform, Stat 안의 ActivePoint 나 MoveSpeed
-    // 스킬을 시전하는 대상의 Unit 스크립트 안의 Stat
-
-    
-    public abstract bool OnSkill();
-}
-
-public class Move : BaseSkill
-{
-    Transform _destPos;
-    public override bool OnSkill()
+    public struct STSkill
     {
-        name = "move";
-        return false;
+        public bool IsPossible;
+        public string skillName;
+        public int needActivePoint;
+        public Define.SkillType type;
     }
-}
 
-public class AttackSkill : BaseSkill
-{
-    public AttackSkill()
+    [Serializable]
+    public abstract class BaseSkill
     {
-        
+        // protected STSkill SkillInfor;
+        public string skillName { get; protected set; }
+        public int needActivePoint { get; protected set; }
+        public Define.SkillType type { get; protected set; }
+        public bool IsPossible { get; protected set; }
+
+        protected BaseUnit self;
+        public abstract void EvaluateTarget(RaycastHit hit);
+        public abstract void OnUpdate();
+        // public abstract void Clear();
     }
-    public override bool OnSkill()
+
+    public class Move : BaseSkill
     {
-        return false;
+        Vector3 destDir;
+        public Move(BaseUnit self)
+        {
+            this.self = self;
+            skillName = "Move";
+            needActivePoint = 1;
+            type = Define.SkillType.Move;
+            IsPossible = false;
+        }
+
+        public override void EvaluateTarget(RaycastHit hit)
+        {
+            if (self.MoveSpeed >= Vector3.Distance(self.gameObject.transform.position, hit.point))
+            {
+                destDir = hit.point;
+                // 거리에 따라 needActivePoint 값 변경 가능함 
+                IsPossible = true;
+            }
+            else
+            {
+                IsPossible = false;
+            }
+            Debug.Log(IsPossible);
+        }
+
+        public override void OnUpdate()
+        {
+            if (Vector3.Distance(self.gameObject.transform.position, destDir) > 0.001f)
+            {
+                self.transform.position += (destDir - self.gameObject.transform.position).normalized * Time.deltaTime;
+            }
+            else
+            {
+                IsPossible = false;
+            }
+        }
+    }
+
+    public class AttackSkill : BaseSkill
+    {
+        public AttackSkill()
+        {
+            skillName = "Attack";
+            needActivePoint = 2;
+            type = Define.SkillType.Attack;
+            IsPossible = false;
+        }
+
+        public override void EvaluateTarget(RaycastHit hit)
+        {
+            
+        }
+
+        public override void OnUpdate()
+        {
+        }
     }
 }

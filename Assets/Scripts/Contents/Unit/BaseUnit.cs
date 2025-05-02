@@ -1,18 +1,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using Skill;
 using UnityEngine;
 
 [Serializable]
 public abstract class BaseUnit : MonoBehaviour
 {
-    public Define.WorldObject WorldObjectType { get; protected set; } = Define.WorldObject.None;
-    protected Define.UnitState State { get; private set; } = Define.UnitState.Idle;
+    public Define.WorldObject WorldObjectType;
+    public Define.UnitState UnitStateType { get; private set; } = Define.UnitState.Idle;
 
     [SerializeField]
     Define.UnitName _name;
+
     #region Stat
+
     protected string _specie;
     protected int _level;
     protected int _hp;
@@ -29,13 +31,21 @@ public abstract class BaseUnit : MonoBehaviour
     public int MoveSpeed { get { return _moveSpeed; } set { _moveSpeed = value; }}
     public int Attack { get { return _attack; } set { _attack = value; }}
     public int Sight { get { return _sight; } set { _sight = value; }}
-    #endregion
-
-    #region Skill
-    protected List<string> skillList;
 
     #endregion
-    public BaseSkill currentSkill;
+
+    #region "Skill"
+
+    protected Dictionary<int, Skill.BaseSkill> SkillDict = new Dictionary<int, BaseSkill>();
+    protected Skill.BaseSkill GetSkillByIntKey(int key) 
+    {
+        return SkillDict.ContainsKey(key) ?  SkillDict[key] : null;
+    }
+    protected Skill.BaseSkill currentSkill;
+
+    #endregion
+    
+    protected GameObject _lockTarget;
 
     void Start()
     {
@@ -44,6 +54,8 @@ public abstract class BaseUnit : MonoBehaviour
 
     protected virtual void Init()
     {
+        WorldObjectType = Define.WorldObject.Enemy;
+
         Data.Unit unit = Managers.Data.UnitDict[Enum.GetName(typeof(Define.UnitName), _name)];
         _specie = unit.specie;
         _level = unit.startLevel;
@@ -52,17 +64,43 @@ public abstract class BaseUnit : MonoBehaviour
         _attack = unit.stats[_level].attack;
         _sight = unit.stats[_level].sight;
 
-        // _skills = unit.skills[unit.startLevel].names;
+        // SkillDict;
     }
 
-    protected void ClearSkill()
+    public virtual void OnAffactBySkill(BaseSkill skill)
     {
-        currentSkill = null;
+        
+    }
+    public virtual void OnDead(BaseSkill skill)
+    {
+        
+    }
+    public void AttachSkillToUnit(int key)
+    {
+        if (UnitStateType == Define.UnitState.Idle)
+        {
+            // currentSkill = GetSkillByIntKey(key);
+            currentSkill = new Move(this);
+        }
+    }
+
+    public virtual void SetTarget(GameObject go) {}
+    public virtual void SetTarget(RaycastHit hit) {}
+    public virtual void UndoTarget() {}
+    public void OnSkill()
+    {
+        if (currentSkill != null && currentSkill.IsPossible)
+        {
+            Debug.Log("스킬 실행!");
+            ActionPoint -= currentSkill.needActivePoint; // AP 결제
+
+            UnitStateType = Define.UnitState.Skill;
+        }
     }
 
     void Update()
     {
-        switch (State)
+        switch (UnitStateType)
         {
             case Define.UnitState.Idle:
                 UpdateIdle();
@@ -75,40 +113,24 @@ public abstract class BaseUnit : MonoBehaviour
                 break;
         }
     }
-    // (1번 -> "move", 2번 -> "attack)
-    public virtual void SetCurrentSkill(int option)
-    {
-        if (option < skillList.Count + 1)
-        {
-            
-        }
-    }
-    public virtual void OnSkill(GameObject target)
-    {
-        currentSkill.OnSkill();
 
-    }
-    public virtual void OnAttack(BaseUnit attacker)
-    {
-
-    }
-    public virtual void OnDead(BaseUnit attacker)
-    {
-
-    }
-    
-    public virtual void SetOrAddTarget(GameObject _target) {}
     protected virtual void UpdateIdle() 
-    { 
-
+    {
+        // Idle Animation
     }
     protected virtual void UpdateSkill() 
     {
-        // if (!currentSkill.OnSkill())
-        //     State = Define.UnitState.Idle;
+        //Skill Animation
+        if (!currentSkill.IsPossible)
+        {
+            UnitStateType = Define.UnitState.Idle;
+            currentSkill = null;
+            return;
+        }
+        currentSkill.OnUpdate();
     }
     protected virtual void UpdateDie() 
     { 
-
+        //Die Animation
     }
 }

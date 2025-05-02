@@ -17,20 +17,32 @@ public class PlayerUnit : BaseUnit
 
         WorldObjectType = Define.WorldObject.Player;
     }
-    // public override Skill.BaseSkill GenerateSkill(int option)
-    // {
-        
-    // }
+    
+    public override void SetTarget(RaycastHit hit)
+    {
+        if (currentSkill == null)
+            return;
+
+        currentSkill.EvaluateTarget(hit);
+    }
+    public override void UndoTarget()
+    {
+        if (currentSkill == null)
+            return;
+
+        _lockTarget = null;
+    }
+
     protected override void UpdateIdle() 
     { 
-
+        base.UpdateIdle();
     }
     protected override void UpdateSkill() 
     {
-
+        base.UpdateSkill();
     }
     protected override void UpdateDie() 
     { 
-
+        base.UpdateDie();
     }
 }

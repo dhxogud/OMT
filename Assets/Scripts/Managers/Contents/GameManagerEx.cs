@@ -19,13 +19,13 @@ public class GameManagerEx
     
     #region Players
     List<GameObject> _players = new List<GameObject>();
-    public List<GameObject> GetPlayers() { return _players; }
+    public ref List<GameObject> GetPlayers() { return ref _players; }
     #endregion
 
 
     #region AIEnemys
-    Dictionary<int, GameObject> _enemys = new Dictionary<int, GameObject>();
-    public Dictionary<int, GameObject> GetEnemys() { return _enemys; }
+    List<GameObject> _enemys = new List<GameObject>();
+    public ref List<GameObject> GetEnemys() { return ref _enemys; }
 
     #endregion
     
@@ -39,7 +39,7 @@ public class GameManagerEx
                 _players.Add(go);
                 break;
             case Define.WorldObject.Enemy:
-                 _enemys.Add(_enemys.Count, go);
+                 _enemys.Add(go);
                 break;
         }
         return go;
@@ -62,28 +62,11 @@ public class GameManagerEx
         {
             case Define.WorldObject.Player:
                 _players.Remove(go);
-                if (_players.Count <= 0)
-                {
-                    OnChangeGameState(Define.GameState.Lose);
-                }
                 break;
             case Define.WorldObject.Enemy:
-                _enemys.Remove(_enemys.FindFirstKeyByValue<int, GameObject>(go));
-                if (_enemys.Count <= 0)
-                {
-                    OnChangeGameState(Define.GameState.Won); // 승리 조건
-                }
+                _enemys.Remove(go);
                 break;
         }
         Managers.Resource.Destroy(go);
-    }
-
-    public void Init()
-    {
-        State = Define.GameState.None;
-    }
-    public void OnUpdate()
-    {
-        Debug.Log(Enum.GetName(typeof(Define.GameState), State));
     }
 }

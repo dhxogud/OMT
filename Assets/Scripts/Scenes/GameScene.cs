@@ -2,15 +2,17 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Playables;
+
 
 public class GameScene : BaseScene
 {
-    CameraController cameraController;
-    UnitController unitController; 
-    SpawnController spawnController;
+    PlayerController _PlayerController;
+    GameObject _players;
+    AIController _AIController;
+    GameObject _enemys;
+    string[] allUnitNames = { "Unit/HellHound", "Unit/John", "Unit/Moo" };
 
-    public Action<GameObject> SwitchTargetAction = null;
+
 
     protected override void Init()
     {
@@ -21,13 +23,15 @@ public class GameScene : BaseScene
         Managers.Game.GameStateAction -= OnGameStateAction;
         Managers.Game.GameStateAction += OnGameStateAction;
 
-
         gameObject.GetOrAddComponent<CursorController>();
-        cameraController = Camera.main.gameObject.GetOrAddComponent<CameraController>();
-        unitController = gameObject.GetOrAddComponent<UnitController>();
-        spawnController = gameObject.GetOrAddComponent<SpawnController>();
+        Camera.main.gameObject.GetOrAddComponent<CameraController>();
+
+        _players = new GameObject { name = "@Players" };
+        _enemys = new GameObject { name = "@Enemys" };
+
 
         Managers.Game.OnChangeGameState(Define.GameState.Ready);
+
     }
 
     public override void Clear()
@@ -40,28 +44,76 @@ public class GameScene : BaseScene
         switch (gameState)
         {
             case Define.GameState.Ready:
-                spawnController.Init();
-                cameraController.Init();
+                OnGameReady();
+                break;
+            case Define.GameState.Start:
+                OnGameStart();
                 break;
             case Define.GameState.PlayerTurn:
-                spawnController.Clear();
-                unitController.Init();
-                cameraController.Init();
+                OnGamePlayerTurn();
                 break;
             case Define.GameState.EnemyTurn:
-                unitController.Clear();
-                cameraController.Clear();
+                OnGameEnemyTurn();
                 break;
             case Define.GameState.Won:
-                unitController.Clear();
-                cameraController.Clear();
-                spawnController.Clear();
                 break;
             case Define.GameState.Lose:
-                unitController.Clear();
-                cameraController.Clear();
-                spawnController.Clear();
                 break;
         }
+    }
+    void OnGameReady()
+    {
+        TestSpawnEnemeys();
+        Managers.Input.MouseButtonAction -= OnMouseButtonAction;
+        Managers.Input.MouseButtonAction += OnMouseButtonAction;
+    }
+
+    void TestSpawnEnemeys()
+    {
+        foreach (string name in allUnitNames)
+        {
+            GameObject go = Managers.Game.Spawn(Define.WorldObject.Enemy, name, _enemys.transform);
+            float randomFloat = UnityEngine.Random.Range(-30.0f, 30.0f);
+            go.transform.position = new Vector3(randomFloat, 0.0f , randomFloat);
+        }
+    }
+    public void OnMouseButtonAction(Define.MouseEvent evt)
+    {
+        if (evt == Define.MouseEvent.LeftButtonClick)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                GameObject go = Managers.Game.Spawn(Define.WorldObject.Player, "Unit/Moo", _players.transform );
+                go.transform.position = hit.point;
+            }
+        }
+        if (evt == Define.MouseEvent.RightButtonClick)
+        {
+            Managers.Game.OnChangeGameState(Define.GameState.Start);
+        }
+    }
+
+    void OnGameStart()
+    {
+        Managers.Input.MouseButtonAction -= OnMouseButtonAction;
+
+        _PlayerController = gameObject.GetOrAddComponent<PlayerController>();
+
+        _AIController = gameObject.GetOrAddComponent<AIController>();
+
+        Managers.Game.OnChangeGameState(Define.GameState.PlayerTurn);
+    }
+    void OnGamePlayerTurn()
+    {
+        _PlayerController.enabled = true;
+        _AIController.enabled = false;
+    }
+    void OnGameEnemyTurn()
+    {
+        _PlayerController.enabled = false;
+        _AIController.enabled = true;
+        // enemyController 에게 이 소식을 전달해야됨
     }
 }

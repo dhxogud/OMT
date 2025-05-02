@@ -34,7 +34,6 @@ public class Managers : MonoBehaviour
     void Update() 
     {
         _input.OnUpdate();
-        _game.OnUpdate();
     }
 
     static void Init()
@@ -48,7 +47,6 @@ public class Managers : MonoBehaviour
             DontDestroyOnLoad(go);
             
             _instance._data.Init();
-            _instance._game.Init();
         }
     }
     

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Data;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -13,6 +14,11 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     GameObject _target;
     public void SetTarget(GameObject target) { _target = target; }
+
+    void Start()
+    {
+        Init();
+    }
 
     public void LateUpdate()
     {
@@ -53,7 +59,7 @@ public class CameraController : MonoBehaviour
         }
     }
 
-    public void OnMouseWheelAction(int scrollDir)
+    void OnMouseWheelAction(int scrollDir)
     {
         if (_mode == Define.CameraMode.QuarterView)
         {
@@ -71,7 +77,7 @@ public class CameraController : MonoBehaviour
         _delta = delta.normalized * maxDistanceDelta;
     }
 
-    public void Init()
+    void Init()
     {
         _delta = _delta.normalized * maxDistanceDelta;
         transform.LookAt(transform.position - _delta);

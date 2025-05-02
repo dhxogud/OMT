@@ -75,7 +75,7 @@
                 "10" : {
                     "hp" : "10000",
                     "actionPoint" : "5",
-                    "moveSpeed" : "10",
+                    "moveSpeed" : "1000",
                     "attack" : "20",
                     "sight" : "20"
                 }

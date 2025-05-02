@@ -28,7 +28,6 @@ public class Define
     public enum CameraMode
     {
         QuarterView,
-        ShoulderView
     }
     public enum Layer
     {
@@ -40,6 +39,7 @@ public class Define
     {
         None,
         Ready,
+        Start,
         PlayerTurn,
         EnemyTurn,
         Won,
@@ -56,12 +56,20 @@ public class Define
     {
         None,
         Player,
-        Enemy
+        Enemy,
     }
     public enum UnitName
     {
         John,
         HellHound,
         Moo
+    }
+    public enum SkillType
+    {
+        None,
+        Move,
+        Attack,
+        Heal,
+        Buff
     }
 }
